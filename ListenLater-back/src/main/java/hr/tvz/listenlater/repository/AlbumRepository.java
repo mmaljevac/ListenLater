@@ -20,26 +20,26 @@ public class AlbumRepository {
     public AlbumRepository(JdbcTemplate jdbc) {
         this.jdbc = jdbc;
         this.inserter = new SimpleJdbcInsert(jdbc)
-                .withTableName("TABLE_ALBUM")
+                .withTableName("ALBUMS")
                 .usingGeneratedKeyColumns("ID");
     }
 
     public List<Album> getAlbumsByUser(int id) {
-        return jdbc.query("SELECT * FROM TABLE_ALBUM WHERE ID_USER = " + id + " ORDER BY ARTIST ASC",
+        return jdbc.query("SELECT * FROM ALBUMS WHERE ID_USER = " + id + " ORDER BY ARTIST ASC",
                 this::mapRowToAlbum);
     }
     public List<Album> getAllEntities() {
-        return jdbc.query("SELECT * FROM TABLE_ALBUM",
+        return jdbc.query("SELECT * FROM ALBUMS",
                 this::mapRowToAlbum);
     }
 
     public Album getEntity(int id) {
-        return jdbc.query("SELECT * FROM TABLE_ALBUM WHERE ID = " + id,
+        return jdbc.query("SELECT * FROM ALBUMS WHERE ID = " + id,
                 this::mapRowToAlbum).get(0);
     }
 
     public Album findByImgUrl(String imgUrl) {
-        var query = jdbc.query("SELECT * FROM TABLE_ALBUM WHERE IMG_URL = '" + imgUrl + "' ",
+        var query = jdbc.query("SELECT * FROM ALBUMS WHERE IMG_URL = '" + imgUrl + "' ",
                 this::mapRowToAlbum);
         if (!query.isEmpty()) {
             return query.get(0);
@@ -62,7 +62,7 @@ public class AlbumRepository {
     }
 
     public Album updateEntity(int id, Album album) {
-        jdbc.update("UPDATE TABLE_ALBUM SET " +
+        jdbc.update("UPDATE ALBUMS SET " +
                         "NAME = ?," +
                         "ARTIST = ?," +
                         "IMG_URL = ?," +
@@ -79,7 +79,7 @@ public class AlbumRepository {
     }
 
     public Boolean deleteEntity(int id) {
-        jdbc.update("DELETE FROM TABLE_ALBUM WHERE ID = " + id);
+        jdbc.update("DELETE FROM ALBUMS WHERE ID = " + id);
         return true;
     }
 

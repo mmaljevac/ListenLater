@@ -25,6 +25,12 @@ public class UserController {
         return new ResponseEntity<>(loggedUser, HttpStatus.OK);
     }
 
+    @PostMapping("/register")
+    public ResponseEntity<User> register(@RequestBody final User user) throws Exception {
+        User registeredUser = this.userService.register(user);
+        return new ResponseEntity<>(registeredUser, HttpStatus.CREATED);
+    }
+
     @PatchMapping("/changePassword/{id}")
     public User changePassword(@PathVariable final int id, @RequestBody final ChangePasswordDTO passwords) {
         return this.userService.changePassword(id, passwords.getCurrentPassword(), passwords.getNewPassword());

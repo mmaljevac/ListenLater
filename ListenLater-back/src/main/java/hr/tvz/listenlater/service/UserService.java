@@ -1,10 +1,13 @@
 package hr.tvz.listenlater.service;
 
+import hr.tvz.listenlater.exceptions.EmailAlreadyExistsException;
 import hr.tvz.listenlater.model.LoginDTO;
 import hr.tvz.listenlater.model.User;
 import hr.tvz.listenlater.repository.UserRepository;
 import lombok.AllArgsConstructor;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.security.authentication.BadCredentialsException;
+import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
@@ -14,15 +17,32 @@ import java.util.List;
 public class UserService {
 
     @Autowired
+    private PasswordEncoder passwordEncoder;
+    @Autowired
     private final UserRepository userRepository;
 
     public User login(LoginDTO loginDTO) {
         User user = this.userRepository.findByEmail(loginDTO.getEmail());
-
-        if(user != null && loginDTO.getPassword().equals(user.getPassword())) {
-            return user;
+        if (user == null || !passwordEncoder.matches(loginDTO.getPassword(), user.getPassword())) {
+            throw new BadCredentialsException("Invalid email or password.");
         }
-        return null;
+        return user;
+    }
+
+    public User register(User user) throws EmailAlreadyExistsException {
+        if (userRepository.findByEmail(user.getEmail()) != null) {
+            throw new EmailAlreadyExistsException("User with the following email already exists: " + user.getEmail());
+        }
+
+        String hashedPassword = passwordEncoder.encode(user.getPassword());
+        User hashedUser = User.builder()
+                .username(user.getUsername())
+                .email(user.getEmail())
+                .password(hashedPassword)
+                .isAdmin(false)
+                .build();
+
+        return this.userRepository.addNewEntity(hashedUser);
     }
 
     public User changePassword(int id, String currentPassword, String newPassword) {

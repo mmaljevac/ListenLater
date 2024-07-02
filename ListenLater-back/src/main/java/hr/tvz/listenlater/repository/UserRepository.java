@@ -21,12 +21,12 @@ public class UserRepository {
     public UserRepository(JdbcTemplate jdbc) {
         this.jdbc = jdbc;
         this.inserter = new SimpleJdbcInsert(jdbc)
-                .withTableName("TABLE_USER")
+                .withTableName("USERS")
                 .usingGeneratedKeyColumns("ID");
     }
 
     public User findByEmail(String email) {
-        var query = jdbc.query("SELECT * FROM TABLE_USER WHERE EMAIL = '" + email + "' ",
+        var query = jdbc.query("SELECT * FROM USERS WHERE EMAIL = '" + email + "' ",
                 this::mapRowToUser);
         if (!query.isEmpty()) {
             return query.get(0);
@@ -35,7 +35,7 @@ public class UserRepository {
     }
 
     public User changePassword(int id, String newPassword) {
-        String sql = "UPDATE TABLE_USER SET PASSWORD = ? WHERE ID = ?";
+        String sql = "UPDATE USERS SET PASSWORD = ? WHERE ID = ?";
         try {
             int rowsAffected = jdbc.update(sql, newPassword, id);
             if (rowsAffected == 1) {
@@ -49,7 +49,7 @@ public class UserRepository {
 
     public User updatePermissions(int id) {
         User user = this.getEntity(id);
-        String sql = "UPDATE TABLE_USER SET IS_ADMIN = ? WHERE ID = ?";
+        String sql = "UPDATE USERS SET IS_ADMIN = ? WHERE ID = ?";
         try {
             int rowsAffected = jdbc.update(sql, !user.isAdmin(), id);
             if (rowsAffected == 1) {
@@ -62,20 +62,16 @@ public class UserRepository {
     }
 
     public List<User> getAllEntities() {
-        return jdbc.query("SELECT * FROM TABLE_USER",
+        return jdbc.query("SELECT * FROM USERS",
                 this::mapRowToUser);
     }
 
     public User getEntity(int id) {
-        return jdbc.query("SELECT * FROM TABLE_USER WHERE ID = " + id,
+        return jdbc.query("SELECT * FROM USERS WHERE ID = " + id,
                 this::mapRowToUser).get(0);
     }
 
-    public User addNewEntity(User user) throws Exception {
-        if (this.findByEmail(user.getEmail()) != null) {
-            throw new Exception("User with this email already exists.");
-        }
-
+    public User addNewEntity(User user) {
         Map<String,Object> parameters = new HashMap<>();
 
         parameters.put("USERNAME",user.getUsername());
@@ -90,7 +86,7 @@ public class UserRepository {
     }
 
     public User updateEntity(int id, User user) {
-        jdbc.update("UPDATE TABLE_USER SET " +
+        jdbc.update("UPDATE USERS SET " +
                         "USERNAME = ?," +
                         "EMAIL = ?," +
                         "PASSWORD = ?," +
@@ -107,8 +103,8 @@ public class UserRepository {
     }
 
     public Boolean deleteEntity(int id) {
-        jdbc.update("DELETE FROM TABLE_ALBUM WHERE ID_USER = " + id);
-        jdbc.update("DELETE FROM TABLE_USER WHERE ID = " + id);
+        jdbc.update("DELETE FROM ALBUMS WHERE ID_USER = " + id);
+        jdbc.update("DELETE FROM USERS WHERE ID = " + id);
         return true;
     }
 

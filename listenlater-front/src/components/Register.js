@@ -26,7 +26,7 @@ const Register = () => {
     const password = formData.password;
     const isAdmin = false;
 
-    await fetch("http://localhost:8080/users", {
+    await fetch("http://localhost:8080/users/register", {
       method: "POST",
       headers: {
         "Content-Type": "application/json",
