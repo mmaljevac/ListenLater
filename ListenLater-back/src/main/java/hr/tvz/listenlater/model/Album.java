@@ -27,7 +27,7 @@ public class Album {
     @Column(name = "IMG_URL")
     private String imgUrl;
 
-    @Column(name = "ID_USER")
-    private int idUser;
+    @Column(name = "USER_ID")
+    private int userId;
 
 }

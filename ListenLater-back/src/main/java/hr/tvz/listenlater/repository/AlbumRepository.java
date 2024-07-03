@@ -25,7 +25,7 @@ public class AlbumRepository {
     }
 
     public List<Album> getAlbumsByUser(int id) {
-        return jdbc.query("SELECT * FROM ALBUMS WHERE ID_USER = " + id + " ORDER BY ARTIST ASC",
+        return jdbc.query("SELECT * FROM ALBUMS WHERE USER_ID = " + id + " ORDER BY ARTIST ASC",
                 this::mapRowToAlbum);
     }
     public List<Album> getAllEntities() {
@@ -53,7 +53,7 @@ public class AlbumRepository {
         parameters.put("NAME",album.getName());
         parameters.put("ARTIST",album.getArtist());
         parameters.put("IMG_URL",album.getImgUrl());
-        parameters.put("ID_USER",album.getIdUser());
+        parameters.put("USER_ID",album.getUserId());
 
         int insertId = inserter.executeAndReturnKey(parameters).intValue();
         album.setId(insertId);
@@ -66,12 +66,12 @@ public class AlbumRepository {
                         "NAME = ?," +
                         "ARTIST = ?," +
                         "IMG_URL = ?," +
-                        "ID_USER = ? " +
+                        "USER_ID = ? " +
                         "WHERE ID = ?",
                 album.getName(),
                 album.getArtist(),
                 album.getImgUrl(),
-                album.getIdUser(),
+                album.getUserId(),
                 id
         );
 
@@ -90,7 +90,7 @@ public class AlbumRepository {
         album.setName(rs.getString("NAME"));
         album.setArtist(rs.getString("ARTIST"));
         album.setImgUrl(rs.getString("IMG_URL"));
-        album.setIdUser(rs.getInt("ID_USER"));
+        album.setUserId(rs.getInt("USER_ID"));
 
         return album;
     }
