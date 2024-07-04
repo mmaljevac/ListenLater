@@ -24,14 +24,13 @@ const Register = () => {
     const username = formData.username;
     const email = formData.email;
     const password = formData.password;
-    const isAdmin = false;
 
     await fetch('http://localhost:8080/users/register', {
       method: 'POST',
       headers: {
         'Content-Type': 'application/json',
       },
-      body: JSON.stringify({ username, email, password, isAdmin }),
+      body: JSON.stringify({ username, email, password }),
     })
     .then((response) => {
       if (response.status === 200) {

@@ -1,8 +1,10 @@
 package hr.tvz.listenlater.controller;
 
-import hr.tvz.listenlater.model.ChangePasswordDTO;
-import hr.tvz.listenlater.model.LoginDTO;
+import hr.tvz.listenlater.model.dto.ChangePasswordDTO;
+import hr.tvz.listenlater.model.dto.CurUserDTO;
+import hr.tvz.listenlater.model.dto.LoginDTO;
 import hr.tvz.listenlater.model.User;
+import hr.tvz.listenlater.model.dto.RegisterDTO;
 import hr.tvz.listenlater.service.UserService;
 import lombok.AllArgsConstructor;
 import org.springframework.http.HttpStatus;
@@ -20,13 +22,13 @@ public class UserController {
     private final UserService userService;
 
     @PostMapping("/login")
-    public ResponseEntity<User> login(@RequestBody final LoginDTO loginDTO) {
+    public ResponseEntity<CurUserDTO> login(@RequestBody final LoginDTO loginDTO) {
         return this.userService.login(loginDTO);
     }
 
     @PostMapping("/register")
-    public ResponseEntity<User> register(@RequestBody final User user) {
-        return this.userService.register(user);
+    public ResponseEntity<User> register(@RequestBody final RegisterDTO registerDto) {
+        return this.userService.register(registerDto);
     }
 
     @PatchMapping("/changePassword/{id}")

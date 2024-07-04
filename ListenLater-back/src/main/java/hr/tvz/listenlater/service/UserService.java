@@ -1,7 +1,9 @@
 package hr.tvz.listenlater.service;
 
-import hr.tvz.listenlater.model.LoginDTO;
+import hr.tvz.listenlater.model.dto.CurUserDTO;
+import hr.tvz.listenlater.model.dto.LoginDTO;
 import hr.tvz.listenlater.model.User;
+import hr.tvz.listenlater.model.dto.RegisterDTO;
 import hr.tvz.listenlater.repository.UserRepository;
 import lombok.AllArgsConstructor;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -21,23 +23,31 @@ public class UserService {
     @Autowired
     private final UserRepository userRepository;
 
-    public ResponseEntity<User> login(LoginDTO loginDTO) {
+    public ResponseEntity<CurUserDTO> login(LoginDTO loginDTO) {
         User user = this.userRepository.findByEmail(loginDTO.getEmail());
         if (user == null || !passwordEncoder.matches(loginDTO.getPassword(), user.getPassword())) {
             return new ResponseEntity<>(null, HttpStatus.BAD_REQUEST); // 400
         }
-        return new ResponseEntity<>(user, HttpStatus.OK); // 200
+
+        CurUserDTO curUser = CurUserDTO.builder()
+                .id(user.getId())
+                .username(user.getUsername())
+                .email(user.getEmail())
+                .isAdmin(user.isAdmin())
+                .build();
+
+        return new ResponseEntity<>(curUser, HttpStatus.OK); // 200
     }
 
-    public ResponseEntity<User> register(User user) {
-        if (userRepository.findByEmail(user.getEmail()) != null) {
+    public ResponseEntity<User> register(RegisterDTO registerDTO) {
+        if (userRepository.findByEmail(registerDTO.getEmail()) != null) {
             return new ResponseEntity<>(null, HttpStatus.BAD_REQUEST); // 400
         }
 
-        String hashedPassword = passwordEncoder.encode(user.getPassword());
+        String hashedPassword = passwordEncoder.encode(registerDTO.getPassword());
         User hashedUser = User.builder()
-                .username(user.getUsername())
-                .email(user.getEmail())
+                .username(registerDTO.getUsername())
+                .email(registerDTO.getEmail())
                 .password(hashedPassword)
                 .isAdmin(false)
                 .build();

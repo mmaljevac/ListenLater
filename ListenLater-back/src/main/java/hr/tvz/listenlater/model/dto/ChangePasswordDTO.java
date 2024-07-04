@@ -1,4 +1,4 @@
-package hr.tvz.listenlater.model;
+package hr.tvz.listenlater.model.dto;
 
 import lombok.Data;
 
