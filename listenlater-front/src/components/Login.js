@@ -1,11 +1,14 @@
-import React, { useContext, useState } from "react";
-import { Link, useNavigate } from "react-router-dom";
-import { AppContext } from "../AppContext";
+import React, { useState } from 'react';
+import { useDispatch, useSelector } from 'react-redux';
+import { Link, useNavigate } from 'react-router-dom';
+import { login } from '../actions';
 
 const Login = () => {
-  const { setCurUser } = useContext(AppContext);
-  const [email, setEmail] = useState("");
-  const [password, setPassword] = useState("");
+  const curUser = useSelector((state) => state.curUser);
+  const dispatch = useDispatch();
+
+  const [email, setEmail] = useState('');
+  const [password, setPassword] = useState('');
   const navigate = useNavigate();
 
   const handleEmailChange = (e) => {
@@ -16,24 +19,27 @@ const Login = () => {
     setPassword(e.target.value);
   };
 
+  const handleLoginSuccess = (user) => {
+    dispatch(login(user));
+    navigate('/');
+  };
+
   const handleSubmit = async (e) => {
     e.preventDefault();
 
-    await fetch("http://localhost:8080/users/login", {
-      method: "POST",
+    await fetch('http://localhost:8080/users/login', {
+      method: 'POST',
       headers: {
-        "Content-Type": "application/json",
+        'Content-Type': 'application/json',
       },
       body: JSON.stringify({ email, password }),
     })
       .then((response) => {
         if (response.status === 200) {
           return response.json();
-        }
-        else if (response.status === 400) {
+        } else if (response.status === 400) {
           alert('Wrong email/password!');
-        }
-        else {
+        } else {
           throw new Error(`HTTP error! Status: ${response.status}`);
         }
       })
@@ -41,13 +47,10 @@ const Login = () => {
         if (data === undefined || data === null) {
           throw new Error('Request returned no data.');
         }
-
-        setCurUser(data);
-        sessionStorage.setItem('curUser', JSON.stringify(data));
-        navigate('/');
+        handleLoginSuccess(data);
       })
       .catch((error) => {
-        console.error("Fetch error:", error);
+        throw new Error(`Fetch error: ${error}`);
       });
   };
 
@@ -79,7 +82,9 @@ const Login = () => {
           <button type="submit">Login</button>
         </div>
       </form>
-      <Link to={'/register'}><p>Don't have an account? Register here</p></Link>
+      <Link to={'/register'}>
+        <p>Don't have an account? Register here</p>
+      </Link>
     </div>
   );
 };

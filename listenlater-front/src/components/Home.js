@@ -1,9 +1,9 @@
-import { useContext, useEffect, useState } from "react";
+import { useEffect, useState } from "react";
 import { Link, Navigate } from "react-router-dom";
-import { AppContext } from "../AppContext";
+import { useSelector } from "react-redux";
 
 const Home = () => {
-  const { curUser } = useContext(AppContext);
+  const curUser = useSelector(state => state.curUser)
 
   const [albums, setAlbums] = useState([]);
 

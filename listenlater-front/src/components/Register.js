@@ -52,7 +52,7 @@ const Register = () => {
         navigate('/login');
       })
       .catch((error) => {
-        console.error('Fetch error:', error);
+        throw new Error(`Fetch error: ${error}`);
       });
   };
 

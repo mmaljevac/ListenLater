@@ -1,11 +1,8 @@
-import { Link, useNavigate } from "react-router-dom";
-import Home from "./Home";
-import { useContext, useEffect } from "react";
-import { AppContext } from "../AppContext";
+import { Link } from 'react-router-dom';
+import { useSelector } from 'react-redux';
 
 const Header = () => {
-  const { curUser, setCurUser } = useContext(AppContext);
-  const navigate = useNavigate();
+  const curUser = useSelector((state) => state.curUser);
 
   return (
     <header>
@@ -16,7 +13,6 @@ const Header = () => {
       ) : (
         <Link to={'/login'} className="headerRight">Login</Link>
       )}
-      
     </header>
   );
 };

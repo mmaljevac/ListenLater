@@ -1,12 +1,12 @@
-import { useContext, useState } from "react";
-import { AppContext } from "../AppContext";
-import { Navigate, useNavigate } from "react-router-dom";
+import { useState } from 'react';
+import { Navigate, useNavigate } from 'react-router-dom';
+import { useSelector } from 'react-redux';
 
 const Search = () => {
-  const { curUser } = useContext(AppContext);
+  const curUser = useSelector((state) => state.curUser);
   const navigate = useNavigate();
 
-  const [searchTerm, setSearchTerm] = useState("");
+  const [searchTerm, setSearchTerm] = useState('');
   const [searchResults, setSearchResults] = useState([]);
 
   const handleSearch = async () => {
@@ -19,7 +19,7 @@ const Search = () => {
 
         setSearchResults(data.results.albummatches.album);
       } catch (error) {
-        console.error("Error fetching data:", error);
+        console.error('Error fetching data:', error);
       }
     }
   };
@@ -27,12 +27,12 @@ const Search = () => {
   const handleAlbumClick = async (album) => {
     const name = album.name;
     const artist = album.artist;
-    const imgUrl = album.image[3]["#text"];
+    const imgUrl = album.image[3]['#text'];
     const idUser = curUser.id;
-    await fetch("http://localhost:8080/albums", {
-      method: "POST",
+    await fetch('http://localhost:8080/albums', {
+      method: 'POST',
       headers: {
-        "Content-Type": "application/json",
+        'Content-Type': 'application/json',
       },
       body: JSON.stringify({ name, artist, imgUrl, idUser }),
     })
@@ -46,7 +46,7 @@ const Search = () => {
         alert('Album added to your ListenLater playlist!');
       })
       .catch((error) => {
-        console.error("Fetch error:", error);
+        console.error('Fetch error:', error);
       });
   };
 
@@ -65,7 +65,7 @@ const Search = () => {
         onKeyDown={handleKeyPress}
         placeholder="Album/artist name"
         className="searchBubble"
-      />{" "}
+      />{' '}
       <br></br>
       <button onClick={handleSearch}>Search</button>
       <ul className="seachUl">
@@ -78,7 +78,7 @@ const Search = () => {
             <a>
               <div className="searchItems">
                 <div className="addButton">+</div>
-                <img src={album.image[3]["#text"]} />
+                <img src={album.image[3]['#text']} />
                 <aside>
                   <div>{album.name}</div>
                   <div className="artist">{album.artist}</div>
@@ -90,7 +90,7 @@ const Search = () => {
       </ul>
     </div>
   ) : (
-    <Navigate to={{ pathname: "/login" }} />
+    <Navigate to={{ pathname: '/login' }} />
   );
 };
 
