@@ -1,12 +1,12 @@
 package hr.tvz.listenlater.service;
 
-import hr.tvz.listenlater.exceptions.EmailAlreadyExistsException;
 import hr.tvz.listenlater.model.LoginDTO;
 import hr.tvz.listenlater.model.User;
 import hr.tvz.listenlater.repository.UserRepository;
 import lombok.AllArgsConstructor;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.security.authentication.BadCredentialsException;
+import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
@@ -21,17 +21,17 @@ public class UserService {
     @Autowired
     private final UserRepository userRepository;
 
-    public User login(LoginDTO loginDTO) {
+    public ResponseEntity<User> login(LoginDTO loginDTO) {
         User user = this.userRepository.findByEmail(loginDTO.getEmail());
         if (user == null || !passwordEncoder.matches(loginDTO.getPassword(), user.getPassword())) {
-            throw new BadCredentialsException("Invalid email or password.");
+            return new ResponseEntity<>(null, HttpStatus.BAD_REQUEST); // 400
         }
-        return user;
+        return new ResponseEntity<>(user, HttpStatus.OK); // 200
     }
 
-    public User register(User user) throws EmailAlreadyExistsException {
+    public ResponseEntity<User> register(User user) {
         if (userRepository.findByEmail(user.getEmail()) != null) {
-            throw new EmailAlreadyExistsException("User with the following email already exists: " + user.getEmail());
+            return new ResponseEntity<>(null, HttpStatus.BAD_REQUEST); // 400
         }
 
         String hashedPassword = passwordEncoder.encode(user.getPassword());
@@ -42,7 +42,8 @@ public class UserService {
                 .isAdmin(false)
                 .build();
 
-        return this.userRepository.addNewEntity(hashedUser);
+        User addedUser = this.userRepository.addNewEntity(hashedUser);
+        return new ResponseEntity<>(addedUser, HttpStatus.OK);
     }
 
     public User changePassword(int id, String currentPassword, String newPassword) {

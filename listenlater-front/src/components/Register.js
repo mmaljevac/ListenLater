@@ -1,13 +1,13 @@
-import React, { useState } from "react";
-import { useNavigate } from "react-router-dom";
+import React, { useState } from 'react';
+import { useNavigate } from 'react-router-dom';
 
 const Register = () => {
   const navigate = useNavigate();
 
   const [formData, setFormData] = useState({
-    username: "",
-    email: "",
-    password: "",
+    username: '',
+    email: '',
+    password: '',
   });
 
   const handleChange = (e) => {
@@ -26,25 +26,33 @@ const Register = () => {
     const password = formData.password;
     const isAdmin = false;
 
-    await fetch("http://localhost:8080/users/register", {
-      method: "POST",
+    await fetch('http://localhost:8080/users/register', {
+      method: 'POST',
       headers: {
-        "Content-Type": "application/json",
+        'Content-Type': 'application/json',
       },
       body: JSON.stringify({ username, email, password, isAdmin }),
     })
-      .then((response) => {
-        if (!response.ok) {
-          throw new Error(`HTTP error! Status: ${response.status}`);
-        }
+    .then((response) => {
+      if (response.status === 200) {
         return response.json();
-      })
+      }
+      else if (response.status === 400) {
+        alert('Email is already in use!');
+      }
+      else {
+        throw new Error(`HTTP error! Status: ${response.status}`);
+      }
+    })
       .then((data) => {
+        if (data === undefined || data === null) {
+          throw new Error('Request returned no data.');
+        }
+        
         navigate('/login');
       })
       .catch((error) => {
-        console.error("Fetch error:", error);
-        alert('Email already exists!');
+        console.error('Fetch error:', error);
       });
   };
 

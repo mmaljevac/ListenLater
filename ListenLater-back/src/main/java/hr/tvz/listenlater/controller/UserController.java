@@ -21,14 +21,12 @@ public class UserController {
 
     @PostMapping("/login")
     public ResponseEntity<User> login(@RequestBody final LoginDTO loginDTO) {
-        User loggedUser = this.userService.login(loginDTO);
-        return new ResponseEntity<>(loggedUser, HttpStatus.OK);
+        return this.userService.login(loginDTO);
     }
 
     @PostMapping("/register")
-    public ResponseEntity<User> register(@RequestBody final User user) throws Exception {
-        User registeredUser = this.userService.register(user);
-        return new ResponseEntity<>(registeredUser, HttpStatus.CREATED);
+    public ResponseEntity<User> register(@RequestBody final User user) {
+        return this.userService.register(user);
     }
 
     @PatchMapping("/changePassword/{id}")

@@ -27,24 +27,24 @@ const Login = () => {
       body: JSON.stringify({ email, password }),
     })
       .then((response) => {
-        if (!response.ok) {
-          throw new Error(`HTTP error! Status: ${response.status}`);
+        if (response.status === 200) {
+          return response.json();
         }
-        if (response.status === 204 || response.headers.get('Content-Length') === '0') {
-          return;
-        }
-
-        return response.json();
-      })
-      .then((data) => {
-        if(data !== undefined) {
-          setCurUser(data);
-          sessionStorage.setItem('curUser', JSON.stringify(data));
-          navigate('/');
-        }
-        else {
+        else if (response.status === 400) {
           alert('Wrong email/password!');
         }
+        else {
+          throw new Error(`HTTP error! Status: ${response.status}`);
+        }
+      })
+      .then((data) => {
+        if (data === undefined || data === null) {
+          throw new Error('Request returned no data.');
+        }
+
+        setCurUser(data);
+        sessionStorage.setItem('curUser', JSON.stringify(data));
+        navigate('/');
       })
       .catch((error) => {
         console.error("Fetch error:", error);
