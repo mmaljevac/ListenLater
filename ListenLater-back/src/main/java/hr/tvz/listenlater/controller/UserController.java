@@ -1,17 +1,12 @@
 package hr.tvz.listenlater.controller;
 
-import hr.tvz.listenlater.model.dto.ChangePasswordDTO;
-import hr.tvz.listenlater.model.dto.CurUserDTO;
-import hr.tvz.listenlater.model.dto.LoginDTO;
 import hr.tvz.listenlater.model.User;
-import hr.tvz.listenlater.model.dto.RegisterDTO;
+import hr.tvz.listenlater.model.dto.ChangePasswordDTO;
+import hr.tvz.listenlater.model.response.CustomResponse;
 import hr.tvz.listenlater.service.UserService;
 import lombok.AllArgsConstructor;
-import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
-
-import java.util.List;
 
 @RestController
 @RequestMapping("/users")
@@ -21,54 +16,44 @@ public class UserController {
 
     private final UserService userService;
 
-    @PostMapping("/login")
-    public ResponseEntity<CurUserDTO> login(@RequestBody final LoginDTO loginDTO) {
-        return this.userService.login(loginDTO);
-    }
-
-    @PostMapping("/register")
-    public ResponseEntity<User> register(@RequestBody final RegisterDTO registerDto) {
-        return this.userService.register(registerDto);
-    }
-
-    @PatchMapping("/changePassword/{id}")
-    public User changePassword(@PathVariable final int id, @RequestBody final ChangePasswordDTO passwords) {
-        return this.userService.changePassword(id, passwords.getCurrentPassword(), passwords.getNewPassword());
+    @PatchMapping("/changePassword")
+    public ResponseEntity<CustomResponse<Object>> changePassword(@RequestBody final ChangePasswordDTO changePasswordDTO) {
+        return userService.changePassword(changePasswordDTO.getEmail(), changePasswordDTO.getCurrentPassword(), changePasswordDTO.getNewPassword());
     }
 
     @PatchMapping("/updatePermissions/{id}")
-    public User updatePermissions(@PathVariable final int id) {
-        return this.userService.updatePermissions(id);
+    public ResponseEntity<CustomResponse<Object>> updatePermissionsById(@PathVariable final int id) {
+        return userService.updatePermissionsById(id);
     }
 
     @GetMapping
-    public ResponseEntity<List<User>> getAllEntities() {
-        List<User> entities = this.userService.getAllEntities();
-        return new ResponseEntity<>(entities, HttpStatus.OK);
+    public ResponseEntity<CustomResponse<Object>> getAllEntities() {
+        return userService.getAllEntities();
     }
 
     @GetMapping("/{id}")
-    public ResponseEntity<User> getEntity(@PathVariable final int id) {
-        User entity = this.userService.getEntity(id);
-        return new ResponseEntity<>(entity, HttpStatus.OK);
+    public ResponseEntity<CustomResponse<Object>> getEntityById(@PathVariable final int id) {
+        return userService.getEntityById(id);
     }
 
     @PostMapping
-    public ResponseEntity<User> addNewEntity(@RequestBody final User user) throws Exception {
-        User addedEntity = this.userService.addNewEntity(user);
-        return new ResponseEntity<>(addedEntity, HttpStatus.CREATED);
+    public ResponseEntity<CustomResponse<Object>> addNewEntity(@RequestBody final User user) {
+        return userService.addNewEntity(user);
     }
 
     @PutMapping("/{id}")
-    public ResponseEntity<User> updateEntity(@PathVariable final int id, @RequestBody final User user) {
-        User updatedEntity = this.userService.updateEntity(id, user);
-        return new ResponseEntity<>(updatedEntity, HttpStatus.OK);
+    public ResponseEntity<CustomResponse<Object>> updateEntity(@PathVariable final int id, @RequestBody final User user) {
+        return userService.updateEntity(id, user);
     }
 
     @DeleteMapping("/{id}")
-    public ResponseEntity<Boolean> deleteEntity(@PathVariable final int id) {
-        boolean deletedEntity = this.userService.deleteEntity(id);
-        return new ResponseEntity<>(deletedEntity, HttpStatus.OK);
+    public ResponseEntity<CustomResponse<Object>> deleteEntity(@PathVariable final int id) {
+        return userService.deleteEntity(id);
+    }
+
+    @DeleteMapping("/deleteUserByEmail")
+    public ResponseEntity<CustomResponse<Object>> deleteUserByEmail(@RequestBody final String email) {
+        return userService.deleteUserByEmail(email);
     }
 
 }

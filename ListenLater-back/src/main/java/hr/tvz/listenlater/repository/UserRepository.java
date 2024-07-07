@@ -1,7 +1,6 @@
 package hr.tvz.listenlater.repository;
 
 import hr.tvz.listenlater.model.User;
-import org.springframework.dao.DataAccessException;
 import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.jdbc.core.simple.SimpleJdbcInsert;
 import org.springframework.stereotype.Repository;
@@ -11,6 +10,7 @@ import java.sql.SQLException;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.Optional;
 
 @Repository
 public class UserRepository {
@@ -25,40 +25,41 @@ public class UserRepository {
                 .usingGeneratedKeyColumns("ID");
     }
 
-    public User findByEmail(String email) {
-        var query = jdbc.query("SELECT * FROM USERS WHERE EMAIL = '" + email + "' ",
+    public Optional<User> findUserByEmail(String email) {
+        List<User> query = jdbc.query("SELECT * FROM USERS WHERE EMAIL = '" + email + "' ",
                 this::mapRowToUser);
-        if (!query.isEmpty()) {
-            return query.get(0);
+        if (query.isEmpty()) {
+            return Optional.empty();
         }
-        return null;
+        return Optional.of(query.getFirst());
     }
 
-    public User changePassword(int id, String newPassword) {
+    public Optional<User> findUserByUsername(String username) {
+        List<User> query = jdbc.query("SELECT * FROM USERS WHERE USERNAME = '" + username + "' ",
+                this::mapRowToUser);
+        if (query.isEmpty()) {
+            return Optional.empty();
+        }
+        return Optional.of(query.getFirst());
+    }
+
+    public boolean changePassword(int id, String newPassword) {
         String sql = "UPDATE USERS SET PASSWORD = ? WHERE ID = ?";
-        try {
-            int rowsAffected = jdbc.update(sql, newPassword, id);
-            if (rowsAffected == 1) {
-                return getEntity(id);
-            }
-            return null;
-        } catch (DataAccessException e) {
-            throw e;
-        }
+        int rowsAffected = jdbc.update(sql, newPassword, id);
+        return rowsAffected == 1;
     }
 
-    public User updatePermissions(int id) {
-        User user = this.getEntity(id);
-        String sql = "UPDATE USERS SET IS_ADMIN = ? WHERE ID = ?";
-        try {
-            int rowsAffected = jdbc.update(sql, !user.isAdmin(), id);
-            if (rowsAffected == 1) {
-                return getEntity(id);
-            }
-            return null;
-        } catch (DataAccessException e) {
-            throw e;
+    public boolean updatePermissions(int id) {
+        Optional<User> optionalUser = getEntityById(id);
+
+        if (optionalUser.isEmpty()) {
+            return false;
         }
+        User user = optionalUser.get();
+
+        String sql = "UPDATE USERS SET IS_ADMIN = ? WHERE ID = ?";
+        int rowsAffected = jdbc.update(sql, !user.isAdmin(), id);
+        return rowsAffected == 1;
     }
 
     public List<User> getAllEntities() {
@@ -66,9 +67,13 @@ public class UserRepository {
                 this::mapRowToUser);
     }
 
-    public User getEntity(int id) {
-        return jdbc.query("SELECT * FROM USERS WHERE ID = " + id,
-                this::mapRowToUser).get(0);
+    public Optional<User> getEntityById(int id) {
+        List<User> query = jdbc.query("SELECT * FROM USERS WHERE ID = " + id,
+                this::mapRowToUser);
+        if (query.isEmpty()) {
+            return Optional.empty();
+        }
+        return Optional.of(query.getFirst());
     }
 
     public User addNewEntity(User user) {
@@ -85,8 +90,8 @@ public class UserRepository {
         return user;
     }
 
-    public User updateEntity(int id, User user) {
-        jdbc.update("UPDATE USERS SET " +
+    public boolean updateEntity(int id, User user) {
+        int rowsAffected = jdbc.update("UPDATE USERS SET " +
                         "USERNAME = ?," +
                         "EMAIL = ?," +
                         "PASSWORD = ?," +
@@ -98,14 +103,13 @@ public class UserRepository {
                 user.isAdmin(),
                 id
         );
-
-        return user;
+        return rowsAffected == 1;
     }
 
-    public Boolean deleteEntity(int id) {
+    public boolean deleteEntity(int id) {
         jdbc.update("DELETE FROM ALBUMS WHERE USER_ID = " + id);
-        jdbc.update("DELETE FROM USERS WHERE ID = " + id);
-        return true;
+        int rowsAffected = jdbc.update("DELETE FROM USERS WHERE ID = " + id);
+        return rowsAffected == 1;
     }
 
     private User mapRowToUser(ResultSet rs, int rowNum) throws SQLException {

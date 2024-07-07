@@ -25,7 +25,7 @@ const Register = () => {
     const email = formData.email;
     const password = formData.password;
 
-    await fetch('http://localhost:8080/users/register', {
+    await fetch('http://localhost:8080/auth/register', {
       method: 'POST',
       headers: {
         'Content-Type': 'application/json',

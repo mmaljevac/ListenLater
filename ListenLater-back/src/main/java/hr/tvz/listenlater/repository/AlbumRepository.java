@@ -1,6 +1,7 @@
 package hr.tvz.listenlater.repository;
 
 import hr.tvz.listenlater.model.Album;
+import hr.tvz.listenlater.model.User;
 import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.jdbc.core.simple.SimpleJdbcInsert;
 import org.springframework.stereotype.Repository;
@@ -10,6 +11,7 @@ import java.sql.SQLException;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.Optional;
 
 @Repository
 public class AlbumRepository {
@@ -33,9 +35,13 @@ public class AlbumRepository {
                 this::mapRowToAlbum);
     }
 
-    public Album getEntity(int id) {
-        return jdbc.query("SELECT * FROM ALBUMS WHERE ID = " + id,
-                this::mapRowToAlbum).get(0);
+    public Optional<Album> getEntityById(int id) {
+        List<Album> query = jdbc.query("SELECT * FROM ALBUMS WHERE ID = " + id,
+                this::mapRowToAlbum);
+        if (query.isEmpty()) {
+            return Optional.empty();
+        }
+        return Optional.of(query.getFirst());
     }
 
     public Album findByImgUrl(String imgUrl) {
@@ -61,8 +67,8 @@ public class AlbumRepository {
         return album;
     }
 
-    public Album updateEntity(int id, Album album) {
-        jdbc.update("UPDATE ALBUMS SET " +
+    public boolean updateEntity(int id, Album album) {
+        int rowsAffected = jdbc.update("UPDATE ALBUMS SET " +
                         "NAME = ?," +
                         "ARTIST = ?," +
                         "IMG_URL = ?," +
@@ -74,13 +80,12 @@ public class AlbumRepository {
                 album.getUserId(),
                 id
         );
-
-        return album;
+        return rowsAffected == 1;
     }
 
-    public Boolean deleteEntity(int id) {
-        jdbc.update("DELETE FROM ALBUMS WHERE ID = " + id);
-        return true;
+    public boolean deleteEntity(int id) {
+        int rowsAffected = jdbc.update("DELETE FROM ALBUMS WHERE ID = " + id);
+        return rowsAffected == 1;
     }
 
     private Album mapRowToAlbum(ResultSet rs, int rowNum) throws SQLException {

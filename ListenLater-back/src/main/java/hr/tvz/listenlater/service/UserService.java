@@ -1,92 +1,180 @@
 package hr.tvz.listenlater.service;
 
-import hr.tvz.listenlater.model.dto.CurUserDTO;
-import hr.tvz.listenlater.model.dto.LoginDTO;
 import hr.tvz.listenlater.model.User;
-import hr.tvz.listenlater.model.dto.RegisterDTO;
+import hr.tvz.listenlater.model.response.CustomResponse;
 import hr.tvz.listenlater.repository.UserRepository;
 import lombok.AllArgsConstructor;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
-import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
+import java.util.Optional;
 
 @Service
 @AllArgsConstructor
 public class UserService {
 
-    @Autowired
-    private PasswordEncoder passwordEncoder;
-    @Autowired
     private final UserRepository userRepository;
 
-    public ResponseEntity<CurUserDTO> login(LoginDTO loginDTO) {
-        User user = this.userRepository.findByEmail(loginDTO.getEmail());
-        if (user == null || !passwordEncoder.matches(loginDTO.getPassword(), user.getPassword())) {
-            return new ResponseEntity<>(null, HttpStatus.BAD_REQUEST); // 400
+    public ResponseEntity<CustomResponse<Object>> changePassword(String email, String currentPassword, String newPassword) {
+        CustomResponse<Object> response;
+
+        Optional<User> optionalUser = userRepository.findUserByEmail(email);
+
+        if (optionalUser.isEmpty()) {
+            response = CustomResponse.builder()
+                    .success(false)
+                    .message("User not found.")
+                    .build();
+            return ResponseEntity.status(HttpStatus.NOT_FOUND).body(response);
         }
 
-        CurUserDTO curUser = CurUserDTO.builder()
-                .id(user.getId())
-                .username(user.getUsername())
-                .email(user.getEmail())
-                .isAdmin(user.isAdmin())
+        User user = optionalUser.get();
+        if (!user.getPassword().equals(currentPassword)) {
+            response = CustomResponse.builder()
+                    .success(false)
+                    .message("Current password is incorrect.")
+                    .build();
+            return ResponseEntity.status(HttpStatus.OK).body(response);
+        }
+
+        boolean isChangedPassword = userRepository.changePassword(user.getId(), newPassword);
+        if (!isChangedPassword) {
+            response = CustomResponse.builder()
+                    .success(false)
+                    .message("Error changing password.")
+                    .build();
+            return ResponseEntity.status(HttpStatus.OK).body(response);
+        }
+
+        response = CustomResponse.builder()
+                .success(true)
+                .message("Password changed successfully.")
                 .build();
-
-        return new ResponseEntity<>(curUser, HttpStatus.OK); // 200
+        return ResponseEntity.status(HttpStatus.OK).body(response);
     }
 
-    public ResponseEntity<User> register(RegisterDTO registerDTO) {
-        if (userRepository.findByEmail(registerDTO.getEmail()) != null) {
-            return new ResponseEntity<>(null, HttpStatus.BAD_REQUEST); // 400
+    public ResponseEntity<CustomResponse<Object>> updatePermissionsById(int id) {
+        CustomResponse<Object> response;
+
+        boolean isUpdated = userRepository.updatePermissions(id);
+        if (!isUpdated) {
+            response = CustomResponse.builder()
+                    .success(false)
+                    .message("User not found.")
+                    .build();
+            return ResponseEntity.status(HttpStatus.NOT_FOUND).body(response);
         }
 
-        String hashedPassword = passwordEncoder.encode(registerDTO.getPassword());
-        User hashedUser = User.builder()
-                .username(registerDTO.getUsername())
-                .email(registerDTO.getEmail())
-                .password(hashedPassword)
-                .isAdmin(false)
+        response = CustomResponse.builder()
+                .success(true)
+                .message("User permissions updated.")
                 .build();
-
-        User addedUser = this.userRepository.addNewEntity(hashedUser);
-        return new ResponseEntity<>(addedUser, HttpStatus.OK);
+        return ResponseEntity.status(HttpStatus.OK).body(response);
     }
 
-    public User changePassword(int id, String currentPassword, String newPassword) {
-        User user = this.userRepository.getEntity(id);
+    public ResponseEntity<CustomResponse<Object>> getAllEntities() {
+        CustomResponse<Object> response;
 
-        if(user != null && user.getPassword().equals(currentPassword)) {
-            return this.userRepository.changePassword(id, newPassword);
+        List<User> users = userRepository.getAllEntities();
+
+        response = CustomResponse.builder()
+                .success(true)
+                .message("Success getting data.")
+                .data(users)
+                .build();
+        return ResponseEntity.status(HttpStatus.OK).body(response);
+    }
+
+    public ResponseEntity<CustomResponse<Object>> getEntityById(int id) {
+        CustomResponse<Object> response;
+
+        Optional<User> optionalUser = userRepository.getEntityById(id);
+
+        if (optionalUser.isEmpty()) {
+            response = CustomResponse.builder()
+                    .success(false)
+                    .message("User doesn't exist.")
+                    .build();
+            return ResponseEntity.status(HttpStatus.NOT_FOUND).body(response);
         }
-        return null;
+
+        User user = optionalUser.get();
+
+        response = CustomResponse.builder()
+                .success(true)
+                .message("Success getting data.")
+                .data(user)
+                .build();
+        return ResponseEntity.status(HttpStatus.OK).body(response);
     }
 
-    public User updatePermissions(int id) {
-        return this.userRepository.updatePermissions(id);
+    public ResponseEntity<CustomResponse<Object>> addNewEntity(User user) {
+        CustomResponse<Object> response;
+
+        User newUser = userRepository.addNewEntity(user);
+
+        response = CustomResponse.builder()
+                .success(true)
+                .message("New user added.")
+                .data(newUser)
+                .build();
+        return ResponseEntity.status(HttpStatus.OK).body(response);
     }
 
-    public List<User> getAllEntities() {
-        return this.userRepository.getAllEntities();
+    public ResponseEntity<CustomResponse<Object>> updateEntity(int id, User user) {
+        CustomResponse<Object> response;
+
+        boolean isUserUpdated = userRepository.updateEntity(id, user);
+        if (!isUserUpdated) {
+            response = CustomResponse.builder()
+                    .success(false)
+                    .message("User not found.")
+                    .build();
+            return ResponseEntity.status(HttpStatus.NOT_FOUND).body(response);
+        }
+
+        response = CustomResponse.builder()
+                .success(true)
+                .message("User updated.")
+                .build();
+        return ResponseEntity.status(HttpStatus.OK).body(response);
     }
 
-    public User getEntity(int id) {
-        return this.userRepository.getEntity(id);
+    public ResponseEntity<CustomResponse<Object>> deleteEntity(int id) {
+        CustomResponse<Object> response;
+
+        boolean isDeleted = userRepository.deleteEntity(id);
+        if (!isDeleted) {
+            response = CustomResponse.builder()
+                    .success(false)
+                    .message("User not found.")
+                    .build();
+            return ResponseEntity.status(HttpStatus.NOT_FOUND).body(response);
+        }
+
+        response = CustomResponse.builder()
+                .success(true)
+                .message("User deleted.")
+                .build();
+        return ResponseEntity.status(HttpStatus.OK).body(response);
     }
 
-    public User addNewEntity(User user) throws Exception {
-        return this.userRepository.addNewEntity(user);
-    }
+    public ResponseEntity<CustomResponse<Object>> deleteUserByEmail(String email) {
+        CustomResponse<Object> response;
 
-    public User updateEntity(int id, User user) {
-        return this.userRepository.updateEntity(id, user);
-    }
+        Optional<User> optionalUser = userRepository.findUserByEmail(email);
+        if (optionalUser.isEmpty()) {
+            response = CustomResponse.builder()
+                    .success(false)
+                    .message("User not found.")
+                    .build();
+            return ResponseEntity.status(HttpStatus.NOT_FOUND).body(response);
+        }
 
-    public boolean deleteEntity(int id) {
-        return this.userRepository.deleteEntity(id);
+        User user = optionalUser.get();
+        return deleteEntity(user.getId());
     }
 
 }

@@ -1,9 +1,9 @@
 package hr.tvz.listenlater.controller;
 
 import hr.tvz.listenlater.model.Album;
+import hr.tvz.listenlater.model.response.CustomResponse;
 import hr.tvz.listenlater.service.AlbumService;
 import lombok.AllArgsConstructor;
-import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
@@ -19,37 +19,32 @@ public class AlbumController {
 
     @GetMapping("/getAlbumsByUser/{id}")
     public List<Album> getAlbumsByUser(@PathVariable final int id) {
-        return this.albumService.getAlbumsByUser(id);
+        return albumService.getAlbumsByUser(id);
     }
 
     @GetMapping
-    public ResponseEntity<List<Album>> getAllEntities() {
-        List<Album> entities = this.albumService.getAllEntities();
-        return new ResponseEntity<>(entities, HttpStatus.OK);
+    public ResponseEntity<CustomResponse<Object>> getAllEntities() {
+        return albumService.getAllEntities();
     }
 
     @GetMapping("/{id}")
-    public ResponseEntity<Album> getEntity(@PathVariable final int id) {
-        Album entity = this.albumService.getEntity(id);
-        return new ResponseEntity<>(entity, HttpStatus.OK);
+    public ResponseEntity<CustomResponse<Object>> getEntityById(@PathVariable final int id) {
+        return albumService.getEntityById(id);
     }
 
     @PostMapping
-    public ResponseEntity<Album> addNewEntity(@RequestBody final Album album) {
-        Album addedEntity = this.albumService.addNewEntity(album);
-        return new ResponseEntity<>(addedEntity, HttpStatus.CREATED);
+    public ResponseEntity<CustomResponse<Object>> addNewEntity(@RequestBody final Album album) {
+        return albumService.addNewEntity(album);
     }
 
     @PutMapping("/{id}")
-    public ResponseEntity<Album> updateEntity(@PathVariable final int id, @RequestBody final Album album) {
-        Album updatedEntity = this.albumService.updateEntity(id, album);
-        return new ResponseEntity<>(updatedEntity, HttpStatus.OK);
+    public ResponseEntity<CustomResponse<Object>> updateEntity(@PathVariable final int id, @RequestBody final Album album) {
+        return albumService.updateEntity(id, album);
     }
 
     @DeleteMapping("/{id}")
-    public ResponseEntity<Boolean> deleteEntity(@PathVariable final int id) {
-        boolean deletedEntity = this.albumService.deleteEntity(id);
-        return new ResponseEntity<>(deletedEntity, HttpStatus.OK);
+    public ResponseEntity<CustomResponse<Object>> deleteEntity(@PathVariable final int id) {
+        return albumService.deleteEntity(id);
     }
 
 }

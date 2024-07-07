@@ -3,7 +3,7 @@ import { Link, Navigate } from "react-router-dom";
 import { useSelector } from "react-redux";
 
 const Admin = () => {
-  const curUser = useSelector(state => state.curUser)
+  const curUser = useSelector((state) => state.curUser);
 
   const [users, setUsers] = useState([]);
   const [albums, setAlbums] = useState([]);
@@ -99,21 +99,24 @@ const Admin = () => {
       });
   };
 
-  const handleAdminPermissionChange = async (user) => {
-    await fetch(`http://localhost:8080/users/updatePermissions/${user.id}`, {
+  const updatePermission = async (user) => {
+    await fetch(`http://localhost:8080/users/updatePermission/${user.id}`, {
       method: "PATCH",
     })
       .then((response) => {
+        console.log(response);
         if (!response.ok) {
           throw new Error(`HTTP error! Status: ${response.status}`);
         }
         return response.json();
       })
       .then((data) => {
+        console.log("data:");
+        console.log(data);
         if (data) {
-          alert("Permission changed!");
-          setUsers(prevUsers => {
-            return prevUsers.map(prevUser => {
+          alert(data.message);
+          setUsers((prevUsers) => {
+            return prevUsers.map((prevUser) => {
               if (prevUser.id === user.id) {
                 return { ...prevUser, admin: !user.admin };
               }
@@ -148,7 +151,7 @@ const Admin = () => {
                 <td>{user.username}</td>
                 <td>{user.email}</td>
                 <td>
-                  <Link onClick={() => handleAdminPermissionChange(user)}>
+                  <Link onClick={() => updatePermission(user)}>
                     {user.admin ? "Yes" : "No"}
                   </Link>
                 </td>
@@ -179,7 +182,9 @@ const Admin = () => {
                 <td>{album.artist}</td>
                 <td>{album.idUser}</td>
                 <td>
-                  <Link onClick={() => handleDeleteAlbum(album.id)}>Delete</Link>
+                  <Link onClick={() => handleDeleteAlbum(album.id)}>
+                    Delete
+                  </Link>
                 </td>
               </tr>
             ))}

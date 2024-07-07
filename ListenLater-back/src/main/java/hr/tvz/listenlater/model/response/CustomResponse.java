@@ -1,4 +1,4 @@
-package hr.tvz.listenlater.model;
+package hr.tvz.listenlater.model.response;
 
 import lombok.AllArgsConstructor;
 import lombok.Builder;
@@ -10,4 +10,7 @@ import lombok.NoArgsConstructor;
 @AllArgsConstructor
 @NoArgsConstructor
 public class CustomResponse<T> {
+    private boolean success;
+    private String message;
+    private T data;
 }
