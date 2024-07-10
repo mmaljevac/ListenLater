@@ -17,10 +17,6 @@ public class AlbumService {
 
     private final AlbumRepository albumRepository;
 
-    public List<Album> getAlbumsByUser(int id) {
-        return albumRepository.getAlbumsByUser(id);
-    }
-
     public ResponseEntity<CustomResponse<Object>> getAllEntities() {
         CustomResponse<Object> response;
 
@@ -34,7 +30,7 @@ public class AlbumService {
         return ResponseEntity.status(HttpStatus.OK).body(response);
     }
 
-    public ResponseEntity<CustomResponse<Object>> getEntityById(int id) {
+    public ResponseEntity<CustomResponse<Object>> getEntityById(Long id) {
         CustomResponse<Object> response;
 
         Optional<Album> optionalAlbum = albumRepository.getEntityById(id);
@@ -70,7 +66,7 @@ public class AlbumService {
         return ResponseEntity.status(HttpStatus.OK).body(response);
     }
 
-    public ResponseEntity<CustomResponse<Object>> updateEntity(int id, Album album) {
+    public ResponseEntity<CustomResponse<Object>> updateEntity(Long id, Album album) {
         CustomResponse<Object> response;
 
         boolean isAlbumUpdated = albumRepository.updateEntity(id, album);
@@ -89,7 +85,7 @@ public class AlbumService {
         return ResponseEntity.status(HttpStatus.OK).body(response);
     }
 
-    public ResponseEntity<CustomResponse<Object>> deleteEntity(int id) {
+    public ResponseEntity<CustomResponse<Object>> deleteEntity(Long id) {
         CustomResponse<Object> response;
 
         boolean isDeleted = albumRepository.deleteEntity(id);

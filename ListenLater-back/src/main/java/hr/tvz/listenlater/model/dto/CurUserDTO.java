@@ -1,5 +1,6 @@
 package hr.tvz.listenlater.model.dto;
 
+import hr.tvz.listenlater.model.enums.Role;
 import lombok.Builder;
 import lombok.Data;
 
@@ -8,5 +9,5 @@ import lombok.Data;
 public class CurUserDTO {
     private String username;
     private String email;
-    private boolean isAdmin;
+    private Role role;
 }

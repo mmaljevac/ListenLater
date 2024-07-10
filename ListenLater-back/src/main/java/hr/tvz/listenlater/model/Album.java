@@ -1,14 +1,12 @@
 package hr.tvz.listenlater.model;
 
-import jakarta.persistence.Column;
-import jakarta.persistence.GeneratedValue;
-import jakarta.persistence.GenerationType;
-import jakarta.persistence.Id;
+import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
 @Data
+@Entity
 @AllArgsConstructor
 @NoArgsConstructor
 public class Album {
@@ -16,18 +14,15 @@ public class Album {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Column(name = "ID")
-    private int id;
+    private Long id;
 
-    @Column(name = "NAME")
+    @Column(name = "NAME", nullable = false)
     private String name;
 
-    @Column(name = "ARTIST")
+    @Column(name = "ARTIST", nullable = false)
     private String artist;
 
-    @Column(name = "IMG_URL")
+    @Column(name = "IMG_URL", nullable = false)
     private String imgUrl;
-
-    @Column(name = "USER_ID")
-    private int userId;
 
 }

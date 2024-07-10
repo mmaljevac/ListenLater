@@ -1,6 +1,8 @@
 package hr.tvz.listenlater.service;
 
 import hr.tvz.listenlater.model.User;
+import hr.tvz.listenlater.model.enums.Role;
+import hr.tvz.listenlater.model.enums.Status;
 import hr.tvz.listenlater.model.response.CustomResponse;
 import hr.tvz.listenlater.repository.UserRepository;
 import lombok.AllArgsConstructor;
@@ -55,10 +57,11 @@ public class UserService {
         return ResponseEntity.status(HttpStatus.OK).body(response);
     }
 
-    public ResponseEntity<CustomResponse<Object>> updatePermissionsById(int id) {
+    public ResponseEntity<CustomResponse<Object>> updateUserRole(Long id, String newRoleString) {
         CustomResponse<Object> response;
 
-        boolean isUpdated = userRepository.updatePermissions(id);
+        Role newRole = Role.fromValue(newRoleString);
+        boolean isUpdated = userRepository.updateUserRole(id, newRole);
         if (!isUpdated) {
             response = CustomResponse.builder()
                     .success(false)
@@ -70,6 +73,36 @@ public class UserService {
         response = CustomResponse.builder()
                 .success(true)
                 .message("User permissions updated.")
+                .build();
+        return ResponseEntity.status(HttpStatus.OK).body(response);
+    }
+
+    public ResponseEntity<CustomResponse<Object>> updateUserStatus(String email, String newStatusString) {
+        CustomResponse<Object> response;
+
+        Optional<User> optionalUser = userRepository.findUserByEmail(email);
+        if (optionalUser.isEmpty()) {
+            response = CustomResponse.builder()
+                    .success(false)
+                    .message("User not found.")
+                    .build();
+            return ResponseEntity.status(HttpStatus.NOT_FOUND).body(response);
+        }
+
+        User user = optionalUser.get();
+        Status newStatus = Status.fromValue(newStatusString);
+        boolean isUserDeactivated = userRepository.updateUserStatus(user.getId(), newStatus);
+        if (!isUserDeactivated) {
+            response = CustomResponse.builder()
+                    .success(false)
+                    .message("Error deactivating user.")
+                    .build();
+            return ResponseEntity.status(HttpStatus.NOT_FOUND).body(response);
+        }
+
+        response = CustomResponse.builder()
+                .success(true)
+                .message("User deactivated.")
                 .build();
         return ResponseEntity.status(HttpStatus.OK).body(response);
     }
@@ -87,7 +120,7 @@ public class UserService {
         return ResponseEntity.status(HttpStatus.OK).body(response);
     }
 
-    public ResponseEntity<CustomResponse<Object>> getEntityById(int id) {
+    public ResponseEntity<CustomResponse<Object>> getEntityById(Long id) {
         CustomResponse<Object> response;
 
         Optional<User> optionalUser = userRepository.getEntityById(id);
@@ -123,7 +156,7 @@ public class UserService {
         return ResponseEntity.status(HttpStatus.OK).body(response);
     }
 
-    public ResponseEntity<CustomResponse<Object>> updateEntity(int id, User user) {
+    public ResponseEntity<CustomResponse<Object>> updateEntity(Long id, User user) {
         CustomResponse<Object> response;
 
         boolean isUserUpdated = userRepository.updateEntity(id, user);
@@ -142,7 +175,7 @@ public class UserService {
         return ResponseEntity.status(HttpStatus.OK).body(response);
     }
 
-    public ResponseEntity<CustomResponse<Object>> deleteEntity(int id) {
+    public ResponseEntity<CustomResponse<Object>> deleteEntity(Long id) {
         CustomResponse<Object> response;
 
         boolean isDeleted = userRepository.deleteEntity(id);
@@ -159,22 +192,6 @@ public class UserService {
                 .message("User deleted.")
                 .build();
         return ResponseEntity.status(HttpStatus.OK).body(response);
-    }
-
-    public ResponseEntity<CustomResponse<Object>> deleteUserByEmail(String email) {
-        CustomResponse<Object> response;
-
-        Optional<User> optionalUser = userRepository.findUserByEmail(email);
-        if (optionalUser.isEmpty()) {
-            response = CustomResponse.builder()
-                    .success(false)
-                    .message("User not found.")
-                    .build();
-            return ResponseEntity.status(HttpStatus.NOT_FOUND).body(response);
-        }
-
-        User user = optionalUser.get();
-        return deleteEntity(user.getId());
     }
 
 }

@@ -21,9 +21,14 @@ public class UserController {
         return userService.changePassword(changePasswordDTO.getEmail(), changePasswordDTO.getCurrentPassword(), changePasswordDTO.getNewPassword());
     }
 
-    @PatchMapping("/updatePermissions/{id}")
-    public ResponseEntity<CustomResponse<Object>> updatePermissionsById(@PathVariable final int id) {
-        return userService.updatePermissionsById(id);
+    @PatchMapping("/updateUserRole/{id}")
+    public ResponseEntity<CustomResponse<Object>> updateUserRole(@PathVariable final Long id, @RequestBody final String newRoleString) {
+        return userService.updateUserRole(id, newRoleString);
+    }
+
+    @PatchMapping("/updateUserStatus/{newStatusString}")
+    public ResponseEntity<CustomResponse<Object>> updateUserStatus(@PathVariable final String newStatusString, @RequestBody final String email) {
+        return userService.updateUserStatus(email, newStatusString);
     }
 
     @GetMapping
@@ -32,7 +37,7 @@ public class UserController {
     }
 
     @GetMapping("/{id}")
-    public ResponseEntity<CustomResponse<Object>> getEntityById(@PathVariable final int id) {
+    public ResponseEntity<CustomResponse<Object>> getEntityById(@PathVariable final Long id) {
         return userService.getEntityById(id);
     }
 
@@ -42,18 +47,13 @@ public class UserController {
     }
 
     @PutMapping("/{id}")
-    public ResponseEntity<CustomResponse<Object>> updateEntity(@PathVariable final int id, @RequestBody final User user) {
+    public ResponseEntity<CustomResponse<Object>> updateEntity(@PathVariable final Long id, @RequestBody final User user) {
         return userService.updateEntity(id, user);
     }
 
     @DeleteMapping("/{id}")
-    public ResponseEntity<CustomResponse<Object>> deleteEntity(@PathVariable final int id) {
+    public ResponseEntity<CustomResponse<Object>> deleteEntity(@PathVariable final Long id) {
         return userService.deleteEntity(id);
-    }
-
-    @DeleteMapping("/deleteUserByEmail")
-    public ResponseEntity<CustomResponse<Object>> deleteUserByEmail(@RequestBody final String email) {
-        return userService.deleteUserByEmail(email);
     }
 
 }

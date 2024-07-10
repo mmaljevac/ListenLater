@@ -1,33 +1,42 @@
 package hr.tvz.listenlater.repository;
 
 import hr.tvz.listenlater.model.User;
+import hr.tvz.listenlater.model.enums.Role;
+import hr.tvz.listenlater.model.enums.Status;
 import org.springframework.jdbc.core.JdbcTemplate;
+import org.springframework.jdbc.core.namedparam.MapSqlParameterSource;
+import org.springframework.jdbc.core.namedparam.NamedParameterJdbcTemplate;
 import org.springframework.jdbc.core.simple.SimpleJdbcInsert;
 import org.springframework.stereotype.Repository;
 
+import java.sql.Date;
 import java.sql.ResultSet;
 import java.sql.SQLException;
-import java.util.HashMap;
 import java.util.List;
-import java.util.Map;
 import java.util.Optional;
 
 @Repository
 public class UserRepository {
 
     private final JdbcTemplate jdbc;
+    private final NamedParameterJdbcTemplate jdbcParams;
     private final SimpleJdbcInsert inserter;
 
-    public UserRepository(JdbcTemplate jdbc) {
+    public UserRepository(JdbcTemplate jdbc, NamedParameterJdbcTemplate jdbcParams) {
         this.jdbc = jdbc;
+        this.jdbcParams = jdbcParams;
         this.inserter = new SimpleJdbcInsert(jdbc)
                 .withTableName("USERS")
                 .usingGeneratedKeyColumns("ID");
     }
 
     public Optional<User> findUserByEmail(String email) {
-        List<User> query = jdbc.query("SELECT * FROM USERS WHERE EMAIL = '" + email + "' ",
-                this::mapRowToUser);
+        String sql = "SELECT * FROM USERS WHERE EMAIL = :email";
+        MapSqlParameterSource parameters = new MapSqlParameterSource()
+                .addValue("email", email);
+
+        List<User> query = jdbcParams.query(sql, parameters, this::mapRowToUser);
+
         if (query.isEmpty()) {
             return Optional.empty();
         }
@@ -35,30 +44,27 @@ public class UserRepository {
     }
 
     public Optional<User> findUserByUsername(String username) {
-        List<User> query = jdbc.query("SELECT * FROM USERS WHERE USERNAME = '" + username + "' ",
-                this::mapRowToUser);
+        String sql = "SELECT * FROM USERS WHERE USERNAME = :username";
+        MapSqlParameterSource parameters = new MapSqlParameterSource()
+                .addValue("username", username);
+
+        List<User> query = jdbcParams.query(sql, parameters, this::mapRowToUser);
+
         if (query.isEmpty()) {
             return Optional.empty();
         }
         return Optional.of(query.getFirst());
     }
 
-    public boolean changePassword(int id, String newPassword) {
+    public boolean changePassword(Long id, String newPassword) {
         String sql = "UPDATE USERS SET PASSWORD = ? WHERE ID = ?";
         int rowsAffected = jdbc.update(sql, newPassword, id);
         return rowsAffected == 1;
     }
 
-    public boolean updatePermissions(int id) {
-        Optional<User> optionalUser = getEntityById(id);
-
-        if (optionalUser.isEmpty()) {
-            return false;
-        }
-        User user = optionalUser.get();
-
-        String sql = "UPDATE USERS SET IS_ADMIN = ? WHERE ID = ?";
-        int rowsAffected = jdbc.update(sql, !user.isAdmin(), id);
+    public boolean updateUserRole(Long id, Role newRole) {
+        String sql = "UPDATE USERS SET ROLE = ? WHERE ID = ?";
+        int rowsAffected = jdbc.update(sql, newRole.getValue(), id);
         return rowsAffected == 1;
     }
 
@@ -67,7 +73,7 @@ public class UserRepository {
                 this::mapRowToUser);
     }
 
-    public Optional<User> getEntityById(int id) {
+    public Optional<User> getEntityById(Long id) {
         List<User> query = jdbc.query("SELECT * FROM USERS WHERE ID = " + id,
                 this::mapRowToUser);
         if (query.isEmpty()) {
@@ -77,49 +83,64 @@ public class UserRepository {
     }
 
     public User addNewEntity(User user) {
-        Map<String,Object> parameters = new HashMap<>();
+        MapSqlParameterSource parameters = new MapSqlParameterSource()
+                .addValue("username", user.getUsername())
+                .addValue("email", user.getEmail())
+                .addValue("password", user.getPassword())
+                .addValue("role", user.getRole().getValue())
+                .addValue("status", user.getStatus().getValue())
+                .addValue("dateCreated", user.getDateCreated());
 
-        parameters.put("USERNAME",user.getUsername());
-        parameters.put("EMAIL",user.getEmail());
-        parameters.put("PASSWORD",user.getPassword());
-        parameters.put("IS_ADMIN",user.isAdmin());
-
-        int insertId = inserter.executeAndReturnKey(parameters).intValue();
+        Long insertId = inserter.executeAndReturnKey(parameters).longValue();
         user.setId(insertId);
 
         return user;
     }
 
-    public boolean updateEntity(int id, User user) {
-        int rowsAffected = jdbc.update("UPDATE USERS SET " +
-                        "USERNAME = ?," +
-                        "EMAIL = ?," +
-                        "PASSWORD = ?," +
-                        "IS_ADMIN = ? " +
-                        "WHERE ID = ?",
-                user.getUsername(),
-                user.getEmail(),
-                user.getPassword(),
-                user.isAdmin(),
-                id
-        );
+    public boolean updateEntity(Long id, User user) {
+        String sql = "UPDATE USERS SET " +
+                "USERNAME = :username, " +
+                "EMAIL = :email, " +
+                "PASSWORD = :password " +
+                "WHERE ID = :id";
+        MapSqlParameterSource parameters = new MapSqlParameterSource()
+                .addValue("username", user.getUsername())
+                .addValue("email", user.getEmail())
+                .addValue("password", user.getPassword())
+                .addValue("id", id);
+
+        int rowsAffected = jdbcParams.update(sql, parameters);
         return rowsAffected == 1;
     }
 
-    public boolean deleteEntity(int id) {
-        jdbc.update("DELETE FROM ALBUMS WHERE USER_ID = " + id);
+    public boolean deleteEntity(Long id) {
+        // TODO dodati brisanje spremljenih albuma od strane usera
+        // TODO dodati provjeru je li album spremljen od bar jednog usera, izbrisati ga ako nije
         int rowsAffected = jdbc.update("DELETE FROM USERS WHERE ID = " + id);
+        return rowsAffected == 1;
+    }
+
+    public boolean updateUserStatus(Long id, Status newStatus) {
+        int rowsAffected = jdbc.update("UPDATE USERS SET STATUS = ? WHERE ID = ?", newStatus.toString(), id);
         return rowsAffected == 1;
     }
 
     private User mapRowToUser(ResultSet rs, int rowNum) throws SQLException {
         User user = new User();
 
-        user.setId(rs.getInt("ID"));
+        user.setId(rs.getLong("ID"));
         user.setUsername(rs.getString("USERNAME"));
         user.setEmail(rs.getString("EMAIL"));
         user.setPassword(rs.getString("PASSWORD"));
-        user.setAdmin(rs.getBoolean("IS_ADMIN"));
+        user.setRole(Role.valueOf(rs.getString("ROLE")));
+        user.setStatus(Status.valueOf(rs.getString("STATUS")));
+
+        Date sqlDate = rs.getDate("DATE_CREATED");
+        if (sqlDate != null) {
+            user.setDateCreated(sqlDate.toLocalDate());
+        } else {
+            user.setDateCreated(null);
+        }
 
         return user;
     }
