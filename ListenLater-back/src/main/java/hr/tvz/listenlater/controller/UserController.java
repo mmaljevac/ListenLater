@@ -36,8 +36,8 @@ public class UserController {
     }
 
     @GetMapping
-    public ResponseEntity<CustomResponse<Object>> getAllEntities() {
-        return userService.getAllEntities();
+    public ResponseEntity<CustomResponse<Object>> getAllEntities(@RequestParam(name = "username", required = false) String username) {
+        return userService.getAllEntities(username);
     }
 
     @GetMapping("/{id}")

@@ -1,6 +1,7 @@
 package hr.tvz.listenlater.service;
 
 import hr.tvz.listenlater.model.AppUser;
+import hr.tvz.listenlater.model.dto.UserDTO;
 import hr.tvz.listenlater.model.enums.Role;
 import hr.tvz.listenlater.model.enums.Status;
 import hr.tvz.listenlater.model.response.CustomResponse;
@@ -95,15 +96,21 @@ public class UserService {
         return ResponseEntity.status(HttpStatus.OK).body(response);
     }
 
-    public ResponseEntity<CustomResponse<Object>> getAllEntities() {
+    public ResponseEntity<CustomResponse<Object>> getAllEntities(String username) {
         CustomResponse<Object> response;
 
-        List<AppUser> users = userRepository.getAllEntities();
+        List<AppUser> users;
+        if (username == null) users = userRepository.getAllEntities();
+        else users = userRepository.getUsersByUsername(username);
+
+        List<UserDTO> usersDTO = users.stream()
+                .map(this::mapUserToDTO)
+                .toList();
 
         response = CustomResponse.builder()
                 .success(true)
                 .message("Success getting data.")
-                .data(users)
+                .data(usersDTO)
                 .build();
         return ResponseEntity.status(HttpStatus.OK).body(response);
     }
@@ -180,6 +187,17 @@ public class UserService {
                 .message("User deleted.")
                 .build();
         return ResponseEntity.status(HttpStatus.OK).body(response);
+    }
+
+    private UserDTO mapUserToDTO(AppUser user) {
+        return UserDTO.builder()
+                .id(user.getId())
+                .username(user.getUsername())
+                .email(user.getEmail())
+                .role(user.getRole())
+                .status(user.getStatus())
+                .dateCreated(user.getDateCreated())
+                .build();
     }
 
 }

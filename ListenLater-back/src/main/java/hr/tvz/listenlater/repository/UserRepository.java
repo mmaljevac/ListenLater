@@ -68,6 +68,15 @@ public class UserRepository {
         return rowsAffected > 0;
     }
 
+    public List<AppUser> getUsersByUsername(String username) {
+        String sql = "SELECT * FROM USERS WHERE UPPER(USERNAME) LIKE :username";
+
+        MapSqlParameterSource parameters = new MapSqlParameterSource();
+        parameters.addValue("username", "%" + username.toUpperCase() + "%");
+
+        return jdbcParams.query(sql, parameters, this::mapRowToUser);
+    }
+
     public List<AppUser> getAllEntities() {
         return jdbc.query("SELECT * FROM USERS",
                 this::mapRowToUser);
