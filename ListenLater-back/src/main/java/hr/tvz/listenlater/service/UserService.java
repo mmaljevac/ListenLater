@@ -1,6 +1,6 @@
 package hr.tvz.listenlater.service;
 
-import hr.tvz.listenlater.model.User;
+import hr.tvz.listenlater.model.AppUser;
 import hr.tvz.listenlater.model.enums.Role;
 import hr.tvz.listenlater.model.enums.Status;
 import hr.tvz.listenlater.model.response.CustomResponse;
@@ -22,7 +22,7 @@ public class UserService {
     public ResponseEntity<CustomResponse<Object>> changePassword(String email, String currentPassword, String newPassword) {
         CustomResponse<Object> response;
 
-        Optional<User> optionalUser = userRepository.findUserByEmail(email);
+        Optional<AppUser> optionalUser = userRepository.findUserByEmail(email);
 
         if (optionalUser.isEmpty()) {
             response = CustomResponse.builder()
@@ -32,7 +32,7 @@ public class UserService {
             return ResponseEntity.status(HttpStatus.NOT_FOUND).body(response);
         }
 
-        User user = optionalUser.get();
+        AppUser user = optionalUser.get();
         if (!user.getPassword().equals(currentPassword)) {
             response = CustomResponse.builder()
                     .success(false)
@@ -57,10 +57,9 @@ public class UserService {
         return ResponseEntity.status(HttpStatus.OK).body(response);
     }
 
-    public ResponseEntity<CustomResponse<Object>> updateUserRole(Long id, String newRoleString) {
+    public ResponseEntity<CustomResponse<Object>> updateUserRole(Long id, Role newRole) {
         CustomResponse<Object> response;
 
-        Role newRole = Role.fromValue(newRoleString);
         boolean isUpdated = userRepository.updateUserRole(id, newRole);
         if (!isUpdated) {
             response = CustomResponse.builder()
@@ -77,21 +76,10 @@ public class UserService {
         return ResponseEntity.status(HttpStatus.OK).body(response);
     }
 
-    public ResponseEntity<CustomResponse<Object>> updateUserStatus(String email, String newStatusString) {
+    public ResponseEntity<CustomResponse<Object>> updateUserStatus(Long id, Status newStatus) {
         CustomResponse<Object> response;
 
-        Optional<User> optionalUser = userRepository.findUserByEmail(email);
-        if (optionalUser.isEmpty()) {
-            response = CustomResponse.builder()
-                    .success(false)
-                    .message("User not found.")
-                    .build();
-            return ResponseEntity.status(HttpStatus.NOT_FOUND).body(response);
-        }
-
-        User user = optionalUser.get();
-        Status newStatus = Status.fromValue(newStatusString);
-        boolean isUserDeactivated = userRepository.updateUserStatus(user.getId(), newStatus);
+        boolean isUserDeactivated = userRepository.updateUserStatus(id, newStatus);
         if (!isUserDeactivated) {
             response = CustomResponse.builder()
                     .success(false)
@@ -110,7 +98,7 @@ public class UserService {
     public ResponseEntity<CustomResponse<Object>> getAllEntities() {
         CustomResponse<Object> response;
 
-        List<User> users = userRepository.getAllEntities();
+        List<AppUser> users = userRepository.getAllEntities();
 
         response = CustomResponse.builder()
                 .success(true)
@@ -123,7 +111,7 @@ public class UserService {
     public ResponseEntity<CustomResponse<Object>> getEntityById(Long id) {
         CustomResponse<Object> response;
 
-        Optional<User> optionalUser = userRepository.getEntityById(id);
+        Optional<AppUser> optionalUser = userRepository.getEntityById(id);
 
         if (optionalUser.isEmpty()) {
             response = CustomResponse.builder()
@@ -133,7 +121,7 @@ public class UserService {
             return ResponseEntity.status(HttpStatus.NOT_FOUND).body(response);
         }
 
-        User user = optionalUser.get();
+        AppUser user = optionalUser.get();
 
         response = CustomResponse.builder()
                 .success(true)
@@ -143,10 +131,10 @@ public class UserService {
         return ResponseEntity.status(HttpStatus.OK).body(response);
     }
 
-    public ResponseEntity<CustomResponse<Object>> addNewEntity(User user) {
+    public ResponseEntity<CustomResponse<Object>> addNewEntity(AppUser user) {
         CustomResponse<Object> response;
 
-        User newUser = userRepository.addNewEntity(user);
+        AppUser newUser = userRepository.addNewEntity(user);
 
         response = CustomResponse.builder()
                 .success(true)
@@ -156,7 +144,7 @@ public class UserService {
         return ResponseEntity.status(HttpStatus.OK).body(response);
     }
 
-    public ResponseEntity<CustomResponse<Object>> updateEntity(Long id, User user) {
+    public ResponseEntity<CustomResponse<Object>> updateEntity(Long id, AppUser user) {
         CustomResponse<Object> response;
 
         boolean isUserUpdated = userRepository.updateEntity(id, user);

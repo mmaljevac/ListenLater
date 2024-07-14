@@ -22,7 +22,14 @@ public class Album {
     @Column(name = "ARTIST", nullable = false)
     private String artist;
 
+    @Transient
+    private String fullName;
+
     @Column(name = "IMG_URL", nullable = false)
     private String imgUrl;
+
+    public String getFullName() {
+        return artist.replace(" ", "+") + "/" + name.replace(" ", "+");
+    }
 
 }

@@ -21,22 +21,22 @@ public class AlbumController {
     }
 
     @GetMapping("/{id}")
-    public ResponseEntity<CustomResponse<Object>> getEntityById(@PathVariable final Long id) {
+    public ResponseEntity<CustomResponse<Object>> getEntityById(@PathVariable Long id) {
         return albumService.getEntityById(id);
     }
 
     @PostMapping
-    public ResponseEntity<CustomResponse<Object>> addNewEntity(@RequestBody final Album album) {
+    public ResponseEntity<CustomResponse<Object>> addNewEntity(@RequestBody Album album) {
         return albumService.addNewEntity(album);
     }
 
     @PutMapping("/{id}")
-    public ResponseEntity<CustomResponse<Object>> updateEntity(@PathVariable final Long id, @RequestBody final Album album) {
+    public ResponseEntity<CustomResponse<Object>> updateEntity(@PathVariable Long id, @RequestBody Album album) {
         return albumService.updateEntity(id, album);
     }
 
     @DeleteMapping("/{id}")
-    public ResponseEntity<CustomResponse<Object>> deleteEntity(@PathVariable final Long id) {
+    public ResponseEntity<CustomResponse<Object>> deleteEntity(@PathVariable Long id) {
         return albumService.deleteEntity(id);
     }
 

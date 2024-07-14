@@ -1,7 +1,7 @@
 package hr.tvz.listenlater.service;
 
-import hr.tvz.listenlater.model.User;
-import hr.tvz.listenlater.model.dto.CurUserDTO;
+import hr.tvz.listenlater.model.AppUser;
+import hr.tvz.listenlater.model.dto.UserDTO;
 import hr.tvz.listenlater.model.dto.LoginDTO;
 import hr.tvz.listenlater.model.dto.RegisterDTO;
 import hr.tvz.listenlater.model.enums.Role;
@@ -27,7 +27,7 @@ public class AuthService {
     public ResponseEntity<CustomResponse<Object>> login(LoginDTO loginDTO) {
         CustomResponse<Object> response;
 
-        Optional<User> optionalUser = userRepository.findUserByEmail(loginDTO.getEmail());
+        Optional<AppUser> optionalUser = userRepository.findUserByEmail(loginDTO.getEmail());
         if (optionalUser.isEmpty()) {
             response = CustomResponse.builder()
                     .success(false)
@@ -36,7 +36,7 @@ public class AuthService {
             return ResponseEntity.status(HttpStatus.NOT_FOUND).body(response);
         }
 
-        User user = optionalUser.get();
+        AppUser user = optionalUser.get();
         if (!loginDTO.getPassword().equals(user.getPassword())) {
             response = CustomResponse.builder()
                     .success(false)
@@ -45,10 +45,13 @@ public class AuthService {
             return ResponseEntity.status(HttpStatus.NOT_FOUND).body(response);
         }
 
-        CurUserDTO curUser = CurUserDTO.builder()
+        UserDTO curUser = UserDTO.builder()
+                .id(user.getId())
                 .username(user.getUsername())
                 .email(user.getEmail())
                 .role(user.getRole())
+                .status(user.getStatus())
+                .dateCreated(user.getDateCreated())
                 .build();
 
         response = CustomResponse.builder()
@@ -78,7 +81,7 @@ public class AuthService {
         }
 
         String hashedPassword = registerDTO.getPassword(); // TODO hash password
-        User hashedUser = User.builder()
+        AppUser hashedUser = AppUser.builder()
                 .username(registerDTO.getUsername())
                 .email(registerDTO.getEmail())
                 .password(hashedPassword)
@@ -87,7 +90,7 @@ public class AuthService {
                 .dateCreated(LocalDate.now())
                 .build();
 
-        User addedUser = userRepository.addNewEntity(hashedUser);
+        AppUser addedUser = userRepository.addNewEntity(hashedUser);
         if (addedUser == null) {
             response = CustomResponse.builder()
                     .success(false)

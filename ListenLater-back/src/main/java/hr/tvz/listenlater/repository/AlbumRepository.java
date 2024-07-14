@@ -1,10 +1,10 @@
 package hr.tvz.listenlater.repository;
 
 import hr.tvz.listenlater.model.Album;
+import lombok.AllArgsConstructor;
 import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.jdbc.core.namedparam.MapSqlParameterSource;
 import org.springframework.jdbc.core.namedparam.NamedParameterJdbcTemplate;
-import org.springframework.jdbc.core.simple.SimpleJdbcInsert;
 import org.springframework.stereotype.Repository;
 
 import java.sql.ResultSet;
@@ -13,19 +13,11 @@ import java.util.List;
 import java.util.Optional;
 
 @Repository
+@AllArgsConstructor
 public class AlbumRepository {
 
     private final JdbcTemplate jdbc;
     private final NamedParameterJdbcTemplate jdbcParams;
-    private final SimpleJdbcInsert inserter;
-
-    public AlbumRepository(JdbcTemplate jdbc, NamedParameterJdbcTemplate jdbcParams) {
-        this.jdbc = jdbc;
-        this.jdbcParams = jdbcParams;
-        this.inserter = new SimpleJdbcInsert(jdbc)
-                .withTableName("ALBUMS")
-                .usingGeneratedKeyColumns("ID");
-    }
 
     public List<Album> getAllEntities() {
         return jdbc.query("SELECT * FROM ALBUMS",
@@ -47,9 +39,7 @@ public class AlbumRepository {
                 .addValue("artist", album.getArtist())
                 .addValue("imgUrl", album.getImgUrl());
 
-        Long insertId = inserter.executeAndReturnKey(parameters).longValue();
-        album.setId(insertId);
-
+        jdbcParams.update("INSERT INTO ALBUMS (NAME, ARTIST, IMG_URL) VALUES (:name, :artist, :imgUrl)", parameters);
         return album;
     }
 
@@ -66,20 +56,22 @@ public class AlbumRepository {
                 .addValue("id", id);
 
         int rowsAffected = jdbcParams.update(sql, parameters);
-        return rowsAffected == 1;
+        return rowsAffected > 0;
     }
 
     public boolean deleteEntity(Long id) {
+        jdbc.update("DELETE FROM SAVED_ALBUMS WHERE ALBUM_ID = " + id);
         int rowsAffected = jdbc.update("DELETE FROM ALBUMS WHERE ID = " + id);
-        return rowsAffected == 1;
+        return rowsAffected > 0;
     }
 
-    private Album mapRowToAlbum(ResultSet rs, int rowNum) throws SQLException {
+    public Album mapRowToAlbum(ResultSet rs, int rowNum) throws SQLException {
         Album album = new Album();
 
         album.setId(rs.getLong("ID"));
         album.setName(rs.getString("NAME"));
         album.setArtist(rs.getString("ARTIST"));
+        album.setFullName(rs.getString("FULL_NAME"));
         album.setImgUrl(rs.getString("IMG_URL"));
 
         return album;

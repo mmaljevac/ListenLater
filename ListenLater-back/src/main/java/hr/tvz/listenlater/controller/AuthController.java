@@ -17,12 +17,12 @@ public class AuthController {
     private final AuthService authService;
 
     @PostMapping("/login")
-    public ResponseEntity<CustomResponse<Object>> login(@RequestBody final LoginDTO loginDTO) {
+    public ResponseEntity<CustomResponse<Object>> login(@RequestBody LoginDTO loginDTO) {
         return authService.login(loginDTO);
     }
 
     @PostMapping("/register")
-    public ResponseEntity<CustomResponse<Object>> register(@RequestBody final RegisterDTO registerDto) {
+    public ResponseEntity<CustomResponse<Object>> register(@RequestBody RegisterDTO registerDto) {
         return authService.register(registerDto);
     }
 
