@@ -1,6 +1,7 @@
 package hr.tvz.listenlater.controller;
 
 import hr.tvz.listenlater.model.Album;
+import hr.tvz.listenlater.model.dto.AlbumDTO;
 import hr.tvz.listenlater.model.response.CustomResponse;
 import hr.tvz.listenlater.service.AlbumService;
 import lombok.AllArgsConstructor;
@@ -26,8 +27,8 @@ public class AlbumController {
     }
 
     @PostMapping
-    public ResponseEntity<CustomResponse<Object>> addNewEntity(@RequestBody Album album) {
-        return albumService.addNewEntity(album);
+    public ResponseEntity<CustomResponse<Object>> addNewEntity(@RequestBody AlbumDTO albumDTO) {
+        return albumService.addNewEntity(albumDTO);
     }
 
     @PutMapping("/{id}")

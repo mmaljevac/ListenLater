@@ -1,5 +1,6 @@
 package hr.tvz.listenlater.controller;
 
+import hr.tvz.listenlater.model.dto.AlbumDTO;
 import hr.tvz.listenlater.model.response.CustomResponse;
 import hr.tvz.listenlater.service.SavedAlbumService;
 import lombok.AllArgsConstructor;
@@ -23,9 +24,9 @@ public class SavedAlbumController {
         return savedAlbumService.getSavedAlbumsByUserIdAndAction(userId, action);
     }
 
-    @PostMapping("/user/{userId}/album/{albumId}")
-    public ResponseEntity<CustomResponse<Object>> saveAlbum(@PathVariable Long userId, @PathVariable Long albumId, @RequestParam(name = "action") String action) {
-        return savedAlbumService.saveAlbum(userId, albumId, action);
+    @PostMapping("/user/{userId}")
+    public ResponseEntity<CustomResponse<Object>> saveAlbum(@PathVariable Long userId, @RequestBody AlbumDTO albumDTO, @RequestParam(name = "action") String action) {
+        return savedAlbumService.saveAlbum(userId, albumDTO, action);
     }
 
     @PatchMapping("/user/{userId}/album/{albumId}")

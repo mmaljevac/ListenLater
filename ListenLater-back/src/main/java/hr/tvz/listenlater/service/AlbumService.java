@@ -1,6 +1,7 @@
 package hr.tvz.listenlater.service;
 
 import hr.tvz.listenlater.model.Album;
+import hr.tvz.listenlater.model.dto.AlbumDTO;
 import hr.tvz.listenlater.model.response.CustomResponse;
 import hr.tvz.listenlater.repository.AlbumRepository;
 import lombok.AllArgsConstructor;
@@ -53,15 +54,15 @@ public class AlbumService {
         return ResponseEntity.status(HttpStatus.OK).body(response);
     }
 
-    public ResponseEntity<CustomResponse<Object>> addNewEntity(Album album) {
+    public ResponseEntity<CustomResponse<Object>> addNewEntity(AlbumDTO albumDTO) {
         CustomResponse<Object> response;
 
-        Album newAlbum = albumRepository.addNewEntity(album);
+        Long newAlbumId = albumRepository.addNewEntity(albumDTO);
 
         response = CustomResponse.builder()
                 .success(true)
                 .message("New album added.")
-                .data(newAlbum)
+                .data(newAlbumId)
                 .build();
         return ResponseEntity.status(HttpStatus.OK).body(response);
     }

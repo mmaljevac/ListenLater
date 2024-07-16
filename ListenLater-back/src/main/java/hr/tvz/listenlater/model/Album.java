@@ -16,20 +16,16 @@ public class Album {
     @Column(name = "ID")
     private Long id;
 
+    @Column(name = "FULL_NAME", nullable = false, unique = true)
+    private String fullName;
+
     @Column(name = "NAME", nullable = false)
     private String name;
 
     @Column(name = "ARTIST", nullable = false)
     private String artist;
 
-    @Transient
-    private String fullName;
-
     @Column(name = "IMG_URL", nullable = false)
     private String imgUrl;
-
-    public String getFullName() {
-        return artist.replace(" ", "+") + "/" + name.replace(" ", "+");
-    }
 
 }

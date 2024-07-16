@@ -76,7 +76,7 @@ public class SavedAlbumRepository {
         return rowsUpdated > 0;
     }
 
-    public boolean updateSavedAlbum(Long userId, Long albumId, String newAction) {
+    public boolean updateSavedAlbumAction(Long userId, Long albumId, String newAction) {
         String sql = " UPDATE SAVED_ALBUMS SET ACTION = :newAction " +
                 " WHERE USER_ID = :userId" +
                 " AND ALBUM_ID = :albumId ";
