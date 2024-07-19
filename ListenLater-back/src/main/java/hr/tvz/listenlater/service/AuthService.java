@@ -27,7 +27,7 @@ public class AuthService {
     public ResponseEntity<CustomResponse<Object>> login(LoginDTO loginDTO) {
         CustomResponse<Object> response;
 
-        Optional<AppUser> optionalUser = userRepository.findUserByEmail(loginDTO.getEmail());
+        Optional<AppUser> optionalUser = userRepository.findUserByUsername(loginDTO.getUsername());
         if (optionalUser.isEmpty()) {
             response = CustomResponse.builder()
                     .success(false)
