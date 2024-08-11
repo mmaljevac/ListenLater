@@ -27,7 +27,7 @@ public class AuthService {
     public ResponseEntity<CustomResponse<Object>> login(LoginDTO loginDTO) {
         CustomResponse<Object> response;
 
-        Optional<AppUser> optionalUser = userRepository.findUserByEmail(loginDTO.getEmail());
+        Optional<AppUser> optionalUser = userRepository.findUserByUsername(loginDTO.getUsername());
         if (optionalUser.isEmpty()) {
             response = CustomResponse.builder()
                     .success(false)
@@ -48,7 +48,6 @@ public class AuthService {
         UserDTO curUser = UserDTO.builder()
                 .id(user.getId())
                 .username(user.getUsername())
-                .email(user.getEmail())
                 .role(user.getRole())
                 .status(user.getStatus())
                 .dateCreated(user.getDateCreated())
@@ -72,18 +71,10 @@ public class AuthService {
                     .build();
             return ResponseEntity.status(HttpStatus.NOT_FOUND).body(response);
         }
-        if (userRepository.findUserByEmail(registerDTO.getEmail()).isPresent()) {
-            response = CustomResponse.builder()
-                    .success(false)
-                    .message("Email already in use.")
-                    .build();
-            return ResponseEntity.status(HttpStatus.NOT_FOUND).body(response);
-        }
 
         String hashedPassword = registerDTO.getPassword(); // TODO hash password
         AppUser hashedUser = AppUser.builder()
                 .username(registerDTO.getUsername())
-                .email(registerDTO.getEmail())
                 .password(hashedPassword)
                 .role(Role.USER)
                 .status(Status.ACTIVE)

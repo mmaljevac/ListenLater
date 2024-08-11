@@ -1,5 +1,5 @@
-INSERT INTO USERS(USERNAME,EMAIL,PASSWORD,ROLE) VALUES ('Admin','admin@tvz.hr','admin123','ADMIN');
-INSERT INTO USERS(USERNAME,EMAIL,PASSWORD,ROLE) VALUES ('Pero','pero@tvz.hr','pero123','USER');
+INSERT INTO USERS(USERNAME,PASSWORD,ROLE) VALUES ('Admin','admin123','ADMIN');
+INSERT INTO USERS(USERNAME,PASSWORD,ROLE) VALUES ('Pero','pero123','USER');
 
 INSERT INTO ALBUMS(FULL_NAME,NAME,ARTIST,IMG_URL) VALUES ('Frank+Ocean/Blonde','Blonde','Frank Ocean','https://lastfm.freetls.fastly.net/i/u/300x300/d204f358ae4063561370b9dc7c0cb8ca.png');
 INSERT INTO ALBUMS(FULL_NAME,NAME,ARTIST,IMG_URL) VALUES ('High+5/Schengengang','Schengengang','High 5','https://lastfm.freetls.fastly.net/i/u/300x300/241fe1fe3a8086c1cdcf5d61d60f123c.png');

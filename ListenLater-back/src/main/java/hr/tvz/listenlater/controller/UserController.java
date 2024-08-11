@@ -3,7 +3,6 @@ package hr.tvz.listenlater.controller;
 import hr.tvz.listenlater.model.AppUser;
 import hr.tvz.listenlater.model.dto.ChangePasswordDTO;
 import hr.tvz.listenlater.model.dto.StringDTO;
-import hr.tvz.listenlater.model.dto.RoleDTO;
 import hr.tvz.listenlater.model.enums.Role;
 import hr.tvz.listenlater.model.enums.Status;
 import hr.tvz.listenlater.model.response.CustomResponse;
@@ -22,7 +21,7 @@ public class UserController {
 
     @PatchMapping("/changePassword")
     public ResponseEntity<CustomResponse<Object>> changePassword(@RequestBody ChangePasswordDTO changePasswordDTO) {
-        return userService.changePassword(changePasswordDTO.getEmail(), changePasswordDTO.getCurrentPassword(), changePasswordDTO.getNewPassword());
+        return userService.changePassword(changePasswordDTO.getUsername(), changePasswordDTO.getCurrentPassword(), changePasswordDTO.getNewPassword());
     }
 
     @PatchMapping("/updateUserRole/{id}")

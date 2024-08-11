@@ -30,19 +30,6 @@ public class UserRepository {
                 .usingGeneratedKeyColumns("ID");
     }
 
-    public Optional<AppUser> findUserByEmail(String email) {
-        String sql = "SELECT * FROM USERS WHERE EMAIL = :email";
-        MapSqlParameterSource parameters = new MapSqlParameterSource()
-                .addValue("email", email);
-
-        List<AppUser> query = jdbcParams.query(sql, parameters, this::mapRowToUser);
-
-        if (query.isEmpty()) {
-            return Optional.empty();
-        }
-        return Optional.of(query.getFirst());
-    }
-
     public Optional<AppUser> findUserByUsername(String username) {
         String sql = "SELECT * FROM USERS WHERE USERNAME = :username";
         MapSqlParameterSource parameters = new MapSqlParameterSource()
@@ -94,7 +81,6 @@ public class UserRepository {
     public AppUser addNewEntity(AppUser user) {
         MapSqlParameterSource parameters = new MapSqlParameterSource()
                 .addValue("username", user.getUsername())
-                .addValue("email", user.getEmail())
                 .addValue("password", user.getPassword())
                 .addValue("role", user.getRole().getValue())
                 .addValue("status", user.getStatus().getValue())
@@ -109,12 +95,10 @@ public class UserRepository {
     public boolean updateEntity(Long id, AppUser user) {
         String sql = "UPDATE USERS SET " +
                 "USERNAME = :username, " +
-                "EMAIL = :email, " +
                 "PASSWORD = :password " +
                 "WHERE ID = :id";
         MapSqlParameterSource parameters = new MapSqlParameterSource()
                 .addValue("username", user.getUsername())
-                .addValue("email", user.getEmail())
                 .addValue("password", user.getPassword())
                 .addValue("id", id);
 
@@ -139,7 +123,6 @@ public class UserRepository {
 
         user.setId(rs.getLong("ID"));
         user.setUsername(rs.getString("USERNAME"));
-        user.setEmail(rs.getString("EMAIL"));
         user.setPassword(rs.getString("PASSWORD"));
         user.setRole(Role.valueOf(rs.getString("ROLE")));
         user.setStatus(Status.valueOf(rs.getString("STATUS")));

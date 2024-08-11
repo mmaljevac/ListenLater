@@ -20,10 +20,10 @@ public class UserService {
 
     private final UserRepository userRepository;
 
-    public ResponseEntity<CustomResponse<Object>> changePassword(String email, String currentPassword, String newPassword) {
+    public ResponseEntity<CustomResponse<Object>> changePassword(String username, String currentPassword, String newPassword) {
         CustomResponse<Object> response;
 
-        Optional<AppUser> optionalUser = userRepository.findUserByEmail(email);
+        Optional<AppUser> optionalUser = userRepository.findUserByUsername(username);
 
         if (optionalUser.isEmpty()) {
             response = CustomResponse.builder()
@@ -193,7 +193,6 @@ public class UserService {
         return UserDTO.builder()
                 .id(user.getId())
                 .username(user.getUsername())
-                .email(user.getEmail())
                 .role(user.getRole())
                 .status(user.getStatus())
                 .dateCreated(user.getDateCreated())
