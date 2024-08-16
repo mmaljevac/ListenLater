@@ -3,9 +3,10 @@ import { useSelector } from "react-redux";
 import { Link, Navigate } from "react-router-dom";
 
 const SavedAlbums = () => {
-  const curUser = useSelector(state => state.curUser)
+  const curUser = useSelector((state) => state.curUser);
 
   const [savedAlbums, setSavedAlbums] = useState([]);
+  const [actionType, setActionType] = useState('LISTEN_LATER');
 
   const fetchAlbums = async () => {
     if (curUser) {
@@ -35,15 +36,18 @@ const SavedAlbums = () => {
 
   const handleDelete = async (id) => {
     try {
-      const response = await fetch(`http://localhost:8080/saved-albums/user/${curUser.id}/album/${id}`, {
-        method: "DELETE",
-      });
+      const response = await fetch(
+        `http://localhost:8080/saved-albums/user/${curUser.id}/album/${id}`,
+        {
+          method: "DELETE",
+        }
+      );
       const payload = await response.json();
       if (response.ok) {
         fetchAlbums();
         return payload;
       } else if (response.status === 404) {
-        console.log(response.message)
+        console.log(response.message);
       }
     } catch (error) {
       throw new Error(`Fetch error: ${error}`);
@@ -51,9 +55,34 @@ const SavedAlbums = () => {
   };
   return curUser ? (
     <div className="content">
+      <div style={{ textAlign: "center", margin: "20px 0" }}>
+        <button
+          onClick={() => setActionType('LISTEN_LATER')}
+          disabled={actionType === "LISTEN_LATER"}
+          style={{ margin: "0 10px" }}
+        >
+          🎧 Listen Later
+        </button>
+        <button
+          onClick={() => setActionType('LIKE')}
+          disabled={actionType === "LIKE"}
+          style={{ margin: "0 10px" }}
+        >
+          Liked
+        </button>
+        <button
+          onClick={() => setActionType('DISLIKE')}
+          disabled={actionType === "DISLIKE"}
+          style={{ margin: "0 10px" }}
+        >
+          Disliked
+        </button>
+      </div>
       <ul>
         {savedAlbums.length !== 0 ? (
-          savedAlbums.map((sa) => (
+          savedAlbums
+          .filter(sa => sa.action === actionType)
+          .map((sa) => (
             <li key={sa.album.name}>
               <div
                 className="closeButton"
@@ -83,6 +112,6 @@ const SavedAlbums = () => {
   ) : (
     <Navigate to={{ pathname: "/login" }} />
   );
-}
+};
 
-export default SavedAlbums
+export default SavedAlbums;

@@ -47,9 +47,9 @@ const Album = () => {
   };
 
   const handleAlbumSave = async (album, action) => {
-    const name = album.name.replace(/ /g, "+");
-    const artist = album.artist.replace(/ /g, "+");
-    const fullName = artist + "/" + name;
+    const name = album.name;
+    const artist = album.artist;
+    const fullName = (artist + "/" + name).replace(/ /g, "+");
     const imgUrl = album.image[3]["#text"];
 
     try {
