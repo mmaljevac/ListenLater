@@ -38,7 +38,7 @@ const Charts = () => {
     {activeChart === "tracks" ? (
       <div>
         <h2>Top Tracks</h2>
-        {tracks.map((track) => (
+        {/* {tracks.map((track) => (
           <li
             className="searchLi"
             key={chart.name}
@@ -54,7 +54,7 @@ const Charts = () => {
               </div>
             </a>
           </li>
-        ))}
+        ))} */}
       </div>
     ) : (
       <div>

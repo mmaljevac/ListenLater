@@ -64,6 +64,25 @@ public class SavedAlbumService {
         return ResponseEntity.status(HttpStatus.OK).body(response);
     }
 
+    public ResponseEntity<CustomResponse<Object>> getIsAlbumSavedByUser(Long userId, String fullName) {
+        CustomResponse<Object> response;
+
+        List<SavedAlbum> savedAlbumsByUser = savedAlbumRepository.getSavedAlbumsByUserId(userId);
+
+        String finalFullName = fullName.replace(" ", "+");
+        Optional<SavedAlbum> optionalSavedAlbum = savedAlbumsByUser.stream()
+                .filter(sa -> sa.getAlbum().getFullName().equalsIgnoreCase(finalFullName))
+                .findFirst();
+        String value;
+        if (optionalSavedAlbum.isEmpty()) {
+            value = "";
+        }
+        value = optionalSavedAlbum.get().getAction().getValue();
+
+        response = CustomResponse.builder().success(true).message("Success getting data.").data(value).build();
+        return ResponseEntity.status(HttpStatus.OK).body(response);
+    }
+
     public ResponseEntity<CustomResponse<Object>> saveAlbum(Long userId, AlbumDTO albumDTO, String actionString) {
         CustomResponse<Object> response;
 

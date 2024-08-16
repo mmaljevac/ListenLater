@@ -25,6 +25,11 @@ public class SavedAlbumController {
         return savedAlbumService.getSavedAlbumsByUserIdAndAction(userId, action);
     }
 
+    @GetMapping("/album/user/{userId}")
+    public ResponseEntity<CustomResponse<Object>> getIsAlbumSavedByUser(@PathVariable Long userId, @RequestParam(name = "fullName", required = true) String fullName) {
+        return savedAlbumService.getIsAlbumSavedByUser(userId, fullName);
+    }
+
     @PostMapping("/save/user/{userId}")
     public ResponseEntity<CustomResponse<Object>> saveAlbum(@PathVariable Long userId, @RequestBody AlbumDTO albumDTO, @RequestParam(name = "action") String action) {
         return savedAlbumService.saveAlbum(userId, albumDTO, action);

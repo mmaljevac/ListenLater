@@ -90,7 +90,7 @@ li {
   animation: flyUp 0.5s ease-in-out both;
 }
 .searchLi {
-  width: 70%;
+  min-width: 70%;
   background-color: rgb(41, 41, 41);
   border-radius: 10px;
   margin: 8px 0;
@@ -105,7 +105,8 @@ li {
   align-items: center;
 }
 aside {
-  min-width: 400px;
+  min-width: 200px;
+  min-width: 300px;
   align-items: center;
   padding: 1rem;
 }
@@ -125,15 +126,6 @@ aside {
     background-color: rgb(85, 85, 85);
   }
 }
-.addButton {
-  position: absolute;
-  top: 5px;
-  left: 25px;
-  visibility: hidden;
-  cursor: pointer;
-  font-size: 50px;
-  
-}
 
 img {
   width: 100%;
@@ -150,9 +142,6 @@ a {
     opacity: 50%;
   }
 
-  &:hover .addButton {
-    visibility: visible;
-  }
   &:hover img {
     box-shadow: 0 10px 20px rgba(0, 0, 0, 0.205);
   }
@@ -193,6 +182,11 @@ button {
   }
   &:active {
     background-color: rgb(12, 102, 21);
+  }
+  &:disabled {
+    background-color: #000000; /* Možeš prilagoditi ovu boju za onemogućeni gumb */
+    color: #666666;           /* Prilagodba boje teksta za onemogućeni gumb */
+    cursor: not-allowed; 
   }
 }
 
