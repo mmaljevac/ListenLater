@@ -1,18 +1,18 @@
-import React, { useState } from 'react';
-import { useDispatch, useSelector } from 'react-redux';
-import { Link, useNavigate } from 'react-router-dom';
-import { login } from '../actions';
+import React, { useState } from "react";
+import { useDispatch } from "react-redux";
+import { Link, useNavigate } from "react-router-dom";
+import { login } from "../actions";
 
 const Login = () => {
-  const curUser = useSelector((state) => state.curUser);
   const dispatch = useDispatch();
 
-  const [email, setEmail] = useState('');
-  const [password, setPassword] = useState('');
+  const [username, setUsername] = useState("");
+  const [password, setPassword] = useState("");
+  const [error, setError] = useState("");
   const navigate = useNavigate();
 
-  const handleEmailChange = (e) => {
-    setEmail(e.target.value);
+  const handleUsernameChange = (e) => {
+    setUsername(e.target.value);
   };
 
   const handlePasswordChange = (e) => {
@@ -21,37 +21,28 @@ const Login = () => {
 
   const handleLoginSuccess = (user) => {
     dispatch(login(user));
-    navigate('/');
+    navigate("/");
   };
 
   const handleSubmit = async (e) => {
     e.preventDefault();
-
-    await fetch('http://localhost:8080/auth/login', {
-      method: 'POST',
-      headers: {
-        'Content-Type': 'application/json',
-      },
-      body: JSON.stringify({ email, password }),
-    })
-      .then((response) => {
-        if (response.status === 200) {
-          return response.json();
-        } else if (response.status === 400) {
-          alert('Wrong email/password!');
-        } else {
-          throw new Error(`HTTP error! Status: ${response.status}`);
-        }
-      })
-      .then((data) => {
-        if (data === undefined || data === null) {
-          throw new Error('Request returned no data.');
-        }
-        handleLoginSuccess(data);
-      })
-      .catch((error) => {
-        throw new Error(`Fetch error: ${error}`);
+    try {
+      const response = await fetch("http://localhost:8080/auth/login", {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify({ username, password }),
       });
+      const payload = await response.json();
+      if (response.ok) {
+        handleLoginSuccess(payload.data);
+      } else if (response.status === 404) {
+        setError(payload.message);
+      }
+    } catch (error) {
+      throw new Error(`Fetch error: ${error}`);
+    }
   };
 
   return (
@@ -59,12 +50,12 @@ const Login = () => {
       <h2>Login</h2>
       <form onSubmit={handleSubmit}>
         <div>
-          <label htmlFor="email">Email:</label>
+          <label htmlFor="username">Username:</label>
           <input
-            type="email"
-            id="email"
-            value={email}
-            onChange={handleEmailChange}
+            type="username"
+            id="username"
+            value={username}
+            onChange={handleUsernameChange}
             required
           />
         </div>
@@ -78,12 +69,13 @@ const Login = () => {
             required
           />
         </div>
+        {error && <p style={{ color: "red" }}>{error}</p>}
         <div>
           <button type="submit">Login</button>
         </div>
       </form>
-      <Link to={'/register'}>
-        <p>Don't have an account? Register here</p>
+      <Link to={"/register"}>
+        <p>Don't have an account? Register here!</p>
       </Link>
     </div>
   );

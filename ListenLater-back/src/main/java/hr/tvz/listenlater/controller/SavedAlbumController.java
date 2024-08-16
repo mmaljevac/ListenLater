@@ -10,6 +10,7 @@ import org.springframework.web.bind.annotation.*;
 @RestController
 @RequestMapping("/saved-albums")
 @AllArgsConstructor()
+@CrossOrigin(origins = "http://localhost:3000")
 public class SavedAlbumController {
 
     private final SavedAlbumService savedAlbumService;
@@ -24,7 +25,7 @@ public class SavedAlbumController {
         return savedAlbumService.getSavedAlbumsByUserIdAndAction(userId, action);
     }
 
-    @PostMapping("/user/{userId}")
+    @PostMapping("/save/user/{userId}")
     public ResponseEntity<CustomResponse<Object>> saveAlbum(@PathVariable Long userId, @RequestBody AlbumDTO albumDTO, @RequestParam(name = "action") String action) {
         return savedAlbumService.saveAlbum(userId, albumDTO, action);
     }

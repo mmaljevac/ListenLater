@@ -13,7 +13,6 @@ header {
   display: flex;
   justify-content: space-between;
   align-items: center;
-  max-width: 800px;
   min-width: 500px;
 }
 
@@ -54,7 +53,7 @@ header {
   }
 }
 .content {
-  max-width: 800px;
+  max-width: 1000px;
   min-width: 500px;
   display: flex;
   flex-direction: column;
@@ -188,7 +187,6 @@ button {
 }
 button:hover {
   background-color: #0f8b2e;
-  padding: 10px 25px;
 }
 button:active {
   background-color: rgb(12, 102, 21);

@@ -76,8 +76,8 @@ const Account = () => {
   };
 
   const deleteUser = async () => {
-    await fetch(`http://localhost:8080/users/${curUser.email}`, {
-      method: "DELETE",
+    await fetch(`http://localhost:8080/users/updateUserRole/${curUser.id}`, {
+      method: "PATCH",
     })
       .then((response) => {
         if (!response.ok) {

@@ -15,7 +15,7 @@ const Admin = () => {
 
     fetchUsers();
     fetchAlbums();
-  }, []);
+  }, [curUser]);
 
   const fetchUsers = async () => {
     await fetch(`http://localhost:8080/users`, {
@@ -138,7 +138,6 @@ const Admin = () => {
           <tr>
             <th>ID</th>
             <th>Username</th>
-            <th>Email</th>
             <th>Admin</th>
             <th>Action</th>
           </tr>
@@ -149,7 +148,6 @@ const Admin = () => {
               <tr key={user.id}>
                 <td>{user.id}</td>
                 <td>{user.username}</td>
-                <td>{user.email}</td>
                 <td>
                   <Link onClick={() => updatePermission(user)}>
                     {user.admin ? "Yes" : "No"}

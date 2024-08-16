@@ -1,13 +1,14 @@
-import React, { useState } from 'react';
-import { useNavigate } from 'react-router-dom';
+import React, { useState } from "react";
+import { useNavigate } from "react-router-dom";
 
 const Register = () => {
+  const [error, setError] = useState("");
   const navigate = useNavigate();
 
   const [formData, setFormData] = useState({
-    username: '',
-    email: '',
-    password: '',
+    username: "",
+    password: "",
+    confirmPassword: "",
   });
 
   const handleChange = (e) => {
@@ -22,37 +23,31 @@ const Register = () => {
     e.preventDefault();
 
     const username = formData.username;
-    const email = formData.email;
     const password = formData.password;
+    const confirmPassword = formData.confirmPassword;
 
-    await fetch('http://localhost:8080/auth/register', {
-      method: 'POST',
-      headers: {
-        'Content-Type': 'application/json',
-      },
-      body: JSON.stringify({ username, email, password }),
-    })
-    .then((response) => {
-      if (response.status === 200) {
-        return response.json();
-      }
-      else if (response.status === 400) {
-        alert('Email is already in use!');
-      }
-      else {
-        throw new Error(`HTTP error! Status: ${response.status}`);
-      }
-    })
-      .then((data) => {
-        if (data === undefined || data === null) {
-          throw new Error('Request returned no data.');
-        }
-        
-        navigate('/login');
-      })
-      .catch((error) => {
-        throw new Error(`Fetch error: ${error}`);
+    if (password !== confirmPassword) {
+      setError("Passwords do not match!");
+      return;
+    }
+
+    try {
+      const response = await fetch("http://localhost:8080/auth/register", {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify({ username, password }),
       });
+      const payload = await response.json();
+      if (response.ok) {
+        navigate("/login");
+      } else if (response.status === 404) {
+        setError(payload.message);
+      }
+    } catch (error) {
+      throw new Error(`Fetch error: ${error}`);
+    }
   };
 
   return (
@@ -71,17 +66,6 @@ const Register = () => {
           />
         </div>
         <div>
-          <label htmlFor="email">Email:</label>
-          <input
-            type="email"
-            id="email"
-            name="email"
-            value={formData.email}
-            onChange={handleChange}
-            required
-          />
-        </div>
-        <div>
           <label htmlFor="password">Password:</label>
           <input
             type="password"
@@ -92,6 +76,18 @@ const Register = () => {
             required
           />
         </div>
+        <div>
+          <label htmlFor="confirmPassword">Confirm password:</label>
+          <input
+            type="confirmPassword"
+            id="confirmPassword"
+            name="confirmPassword"
+            value={formData.confirmPassword}
+            onChange={handleChange}
+            required
+          />
+        </div>
+        {error && <p style={{ color: "red" }}>{error}</p>}
         <div>
           <button type="submit">Register</button>
         </div>

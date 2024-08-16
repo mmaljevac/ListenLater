@@ -6,6 +6,10 @@ import Search from './components/Search';
 import Header from './components/Header';
 import Admin from './components/Admin';
 import Account from './components/Account';
+import AlbumInfo from './components/AlbumInfo';
+import Charts from './components/Charts';
+import SavedAlbums from './components/SavedAlbums';
+import ArtistInfo from './components/ArtistInfo';
 
 function App() {
   return (
@@ -17,6 +21,10 @@ function App() {
         <Route path="/login" element={<Login />}></Route>
         <Route path="/account" element={<Account />}></Route>
         <Route path="/register" element={<Register />}></Route>
+        <Route path="/albums/:artist/:albumName" element={<AlbumInfo />}></Route>
+        <Route path="/artist/:artist" element={<ArtistInfo />}></Route>
+        <Route path="/charts" element={<Charts />}></Route>
+        <Route path="/savedAlbums" element={<SavedAlbums />}></Route>
         <Route path="/admin" element={<Admin />}></Route>
       </Routes>
     </Router>
