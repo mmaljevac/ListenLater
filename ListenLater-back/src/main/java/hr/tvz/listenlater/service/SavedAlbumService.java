@@ -1,6 +1,7 @@
 package hr.tvz.listenlater.service;
 
 import hr.tvz.listenlater.model.Album;
+import hr.tvz.listenlater.model.AppUser;
 import hr.tvz.listenlater.model.SavedAlbum;
 import hr.tvz.listenlater.model.dto.AlbumDTO;
 import hr.tvz.listenlater.model.dto.SavedAlbumDTO;
@@ -8,6 +9,7 @@ import hr.tvz.listenlater.model.enums.Action;
 import hr.tvz.listenlater.model.response.CustomResponse;
 import hr.tvz.listenlater.repository.AlbumRepository;
 import hr.tvz.listenlater.repository.SavedAlbumRepository;
+import hr.tvz.listenlater.repository.UserRepository;
 import lombok.AllArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -22,6 +24,7 @@ public class SavedAlbumService {
 
     private final SavedAlbumRepository savedAlbumRepository;
     private final AlbumRepository albumRepository;
+    private final UserRepository userRepository;
 
     public ResponseEntity<CustomResponse<Object>> getSavedAlbum(Long userId, Long albumId) {
         CustomResponse<Object> response;
@@ -50,6 +53,38 @@ public class SavedAlbumService {
             try {
                 Action action = Action.fromValue(actionString);
                 savedAlbumsByUser = savedAlbumRepository.getSavedAlbumsByUserIdAndAction(userId, action.getValue());
+            } catch (IllegalArgumentException e) {
+                response = CustomResponse.builder().success(false).message("Unknown action.").build();
+                return ResponseEntity.status(HttpStatus.NOT_FOUND).body(response);
+            }
+        }
+
+        List<SavedAlbumDTO> savedAlbumDTOs = savedAlbumsByUser.stream()
+                .map(this::mapSavedAlbumToDTO)
+                .toList();
+
+        response = CustomResponse.builder().success(true).message("Success getting data.").data(savedAlbumDTOs).build();
+        return ResponseEntity.status(HttpStatus.OK).body(response);
+    }
+
+    public ResponseEntity<CustomResponse<Object>> getSavedAlbumsByUser(String username, String actionString) {
+        CustomResponse<Object> response;
+
+        Optional<AppUser> optionalUser = userRepository.findUserByUsername(username);
+        if (optionalUser.isEmpty()) {
+            response = CustomResponse.builder().success(false).message("User not found.").build();
+            return ResponseEntity.status(HttpStatus.NOT_FOUND).body(response);
+        }
+
+        AppUser user = optionalUser.get();
+
+        List<SavedAlbum> savedAlbumsByUser;
+        if (actionString == null) {
+            savedAlbumsByUser = savedAlbumRepository.getSavedAlbumsByUserId(user.getId());
+        } else {
+            try {
+                Action action = Action.fromValue(actionString);
+                savedAlbumsByUser = savedAlbumRepository.getSavedAlbumsByUserIdAndAction(user.getId(), action.getValue());
             } catch (IllegalArgumentException e) {
                 response = CustomResponse.builder().success(false).message("Unknown action.").build();
                 return ResponseEntity.status(HttpStatus.NOT_FOUND).body(response);

@@ -7,7 +7,7 @@ const Header = () => {
   return (
     <header>
       <Link to={'/'} className="headerLeft">ListenLater</Link>
-      <Link to={'/search'} className="headerMiddle">+</Link>
+      <Link to={'/search/albums'} className="headerMiddle">+</Link>
       {curUser ? (
         <Link to={'/account'} className="headerRight">Account</Link>
       ) : (

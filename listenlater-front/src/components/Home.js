@@ -13,9 +13,11 @@ const Home = () => {
   ) : (
     <h1>Hello, {curUser.username} 👋</h1>
   )}
-  <Link to={"/savedAlbums/LISTEN_LATER"} className="link-box"><h2>🔖 My Saved Albums</h2></Link>
+  <Link to={`/user/${curUser.username}/LISTEN_LATER`} className="link-box"><h2>🔖 My Saved Albums</h2></Link>
   <Link to={"/charts"} className="link-box"><h2>📈 Charts</h2></Link>
-  <Link to={"/search"} className="link-box"><h2>🔎 Search</h2></Link>
+  <Link to={"/search/albums"} className="link-box"><h2>💽 Albums</h2></Link>
+  <Link to={"/search/artists"} className="link-box"><h2>🎤 Artists</h2></Link>
+  <Link to={"/search/users"} className="link-box"><h2>👤 Search users</h2></Link>
 </div>
 
   ) : (

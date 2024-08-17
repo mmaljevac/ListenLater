@@ -2,18 +2,18 @@ import { useEffect, useState } from "react";
 import { useSelector } from "react-redux";
 import { Link, Navigate, useNavigate, useParams } from "react-router-dom";
 
-const SavedAlbums = () => {
+const UserProfile = () => {
   const curUser = useSelector((state) => state.curUser);
   const navigate = useNavigate();
 
   const [savedAlbums, setSavedAlbums] = useState([]);
-  const { actionParam } = useParams();
+  const { userName, actionParam } = useParams();
 
   const fetchAlbums = async () => {
     if (curUser) {
       try {
         const response = await fetch(
-          `http://localhost:8080/saved-albums/user/${curUser.id}`,
+          `http://localhost:8080/saved-albums/username/${userName}`,
           {
             method: "GET",
           }
@@ -56,24 +56,32 @@ const SavedAlbums = () => {
   };
   return curUser ? (
     <div className="content">
-      <h1>Saved Albums</h1>
+      <div className="user-box">
+        <div className="user-bubble" style={{ margin: "0 10px 0 0" }}>
+          {userName.charAt(0)}
+        </div>
+        <div>{userName}</div>
+      </div>
+      <h1>
+        {userName === curUser.username ? "My" : `${userName}'s`} Saved Albums
+      </h1>
       <div style={{ textAlign: "center", margin: "0px 0" }}>
         <button
-          onClick={() => navigate(`/savedAlbums/LISTEN_LATER`)}
+          onClick={() => navigate(`/user/${userName}/LISTEN_LATER`)}
           disabled={actionParam === "LISTEN_LATER"}
           style={{ margin: "0 10px" }}
         >
           🎧 Listen Later
         </button>
         <button
-          onClick={() => navigate(`/savedAlbums/LIKE`)}
+          onClick={() => navigate(`/user/${userName}/LIKE`)}
           disabled={actionParam === "LIKE"}
           style={{ margin: "0 10px" }}
         >
           Liked
         </button>
         <button
-          onClick={() => navigate(`/savedAlbums/DISLIKE`)}
+          onClick={() => navigate(`/user/${userName}/DISLIKE`)}
           disabled={actionParam === "DISLIKE"}
           style={{ margin: "0 10px" }}
         >
@@ -86,12 +94,15 @@ const SavedAlbums = () => {
             .filter((sa) => sa.action === actionParam)
             .map((sa) => (
               <li key={sa.album.name}>
-                <div
-                  className="closeButton"
-                  onClick={(e) => handleDelete(sa.album.id)}
-                >
-                  ❌
-                </div>
+                {userName === curUser.username && (
+                  <div
+                    className="closeButton"
+                    onClick={(e) => handleDelete(sa.album.id)}
+                  >
+                    ❌
+                  </div>
+                )}
+
                 <Link
                   to={`/albums/${sa.album.artist.replace(
                     / /g,
@@ -106,7 +117,9 @@ const SavedAlbums = () => {
             ))
         ) : (
           <>
-            <p>Click on the plus to add an album!</p>
+            {userName === curUser.username && (
+              <p>Click on the plus to add an album!</p>
+            )}
           </>
         )}
       </ul>
@@ -116,4 +129,4 @@ const SavedAlbums = () => {
   );
 };
 
-export default SavedAlbums;
+export default UserProfile;

@@ -10,39 +10,80 @@ const Search = () => {
   const [searchResults, setSearchResults] = useState([]);
   const [searchTrigger, setSearchTrigger] = useState(false);
 
-  const { searchParam } = useParams();
+  const { entity, searchParam } = useParams();
   const searchInputRef = useRef(null);
 
-  const handleSearch = async () => {
-    if (searchTerm !== '') {
-      navigate(`/search/${searchTerm}`)
+  const handleSearch = () => {
+    if (searchTerm !== "") {
+      navigate(`/search/${entity}/${searchTerm}`);
       setSearchTrigger(!searchTrigger);
     }
   };
 
-  const fetchData = async () => {
+  const fetchAlbumsArtists = async () => {
     if (searchParam && searchParam.length !== 0) {
       try {
-        console.log("here")
         const response = await fetch(
           // TODO url constants
-          `https://ws.audioscrobbler.com/2.0/?method=album.search&album=${searchParam}&limit=30&api_key=6114c4f9da678af26ac5a4afc15d9c4f&format=json`
+          `https://ws.audioscrobbler.com/2.0/?method=${entity.slice(
+            0,
+            -1
+          )}.search&${entity.slice(
+            0,
+            -1
+          )}=${searchParam}&limit=30&api_key=6114c4f9da678af26ac5a4afc15d9c4f&format=json`
         );
         const data = await response.json();
 
-        setSearchResults(data.results.albummatches.album);
+        if (entity === "albums")
+          setSearchResults(data.results.albummatches.album);
+        else if (entity === "artists")
+          setSearchResults(data.results.artistmatches.artist);
+        console.log(searchResults);
       } catch (error) {
         console.error("Error fetching data:", error);
       }
     }
-  }
+  };
 
-  useEffect(() => {
-    fetchData();
-    if (searchInputRef.current) {
-      searchInputRef.current.focus();
+  const fetchUsers = async () => {
+    if (searchParam && searchParam.length !== 0) {
+      try {
+        const response = await fetch(
+          `http://localhost:8080/users?username=${searchParam}`,
+          {
+            method: "GET",
+            headers: {
+              "Content-Type": "application/json",
+            },
+          }
+        );
+        const payload = await response.json();
+        if (response.ok) {
+          setSearchResults(payload.data);
+        } else if (response.status === 404) {
+          console.log(response.message);
+        }
+      } catch (error) {
+        throw new Error(`Fetch error: ${error}`);
+      }
     }
-  }, [searchTrigger]);
+  };
+
+  const goToInfoPage = (item) => {
+    if (entity === "albums") {
+      navigate(
+        `/albums/${item.artist.replace(/ /g, "+")}/${item.name.replace(
+          / /g,
+          "+"
+        )}`
+      );
+    } else if (entity === "artists") {
+      navigate(`/artist/${item.artist.replace(/ /g, "+")}}`);
+    } else if (entity === "users") {
+      navigate(`/user/${item.username}/LISTEN_LATER`);
+    }
+  };
 
   const handleKeyPress = (event) => {
     if (event.key === "Enter") {
@@ -50,6 +91,15 @@ const Search = () => {
       setSearchTrigger(!searchTrigger);
     }
   };
+
+  useEffect(() => {
+    if (entity === "albums" || entity === "artists") fetchAlbumsArtists();
+    else if (entity === "users") fetchUsers();
+
+    if (searchInputRef.current) {
+      searchInputRef.current.focus();
+    }
+  }, [searchTrigger]);
 
   return curUser ? (
     <div className="content">
@@ -59,28 +109,39 @@ const Search = () => {
         ref={searchInputRef}
         onChange={(e) => setSearchTerm(e.target.value)}
         onKeyDown={handleKeyPress}
-        placeholder="Album/artist name"
+        placeholder={`${entity.slice(0, -1)} name`}
         className="searchBubble"
-        style={{ marginBottom: '20px' }}
+        style={{ marginBottom: "20px" }}
       />
-      <br></br>
       <button onClick={handleSearch}>Search</button>
       <ul className="seachUl">
-        {searchResults.map((album) => (
+        {searchResults.map((item, index) => (
           <li
             className="searchLi"
-            key={album.artist + album.name}
-            onClick={() => navigate(`/albums/${album.artist.replace(
-                  / /g,
-                  "+"
-                )}/${album.name.replace(/ /g, "+")}`)}
+            key={index}
+            onClick={() => goToInfoPage(item)}
           >
             <a>
               <div className="searchItems">
-                <img src={album.image[3]["#text"]} style={{ width: '150px'}} />
+                {(entity === "albums" || entity === "artists") && (
+                  <img
+                    src={item.image[3]["#text"]}
+                    style={{
+                      width: "150px",
+                      borderRadius: entity === "artists" ? "50%" : undefined,
+                    }}
+                  />
+                )}
+
+                {entity === "users" && (
+                  <div className="user-bubble">{item.username.charAt(0)}</div>
+                )}
+
                 <aside>
-                  <div>{album.name}</div>
-                  <div className="artist">{album.artist}</div>
+                  <div>{entity === "users" ? item.username : item.name}</div>
+                  {entity === "albums" && (
+                    <div className="artist">{item.artist}</div>
+                  )}
                 </aside>
               </div>
             </a>

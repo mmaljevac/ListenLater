@@ -312,3 +312,43 @@ tbody tr:hover {
   }
 }
 
+.user-bubble {
+  width: 100px;
+  height: 100px;
+  border-radius: 50%;
+  background-color: $bright-green;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 50px;
+  font-weight: 600;
+  color: rgb(32, 32, 32);
+  flex-shrink: 0;
+  box-shadow: 0 0 10px $bright-green;
+  animation: pulse-glow 4s infinite;
+}
+
+@keyframes pulse-glow {
+  0% {
+    transform: scale(1);
+    box-shadow: 0 0 10px $bright-green;
+  }
+  50% {
+    transform: scale(1.07);
+    box-shadow: 0 0 10px $bright-green;
+  }
+  100% {
+    transform: scale(1);
+    box-shadow: 0 0 10px $bright-green;
+  }
+}
+
+
+.user-box {
+  display: flex;
+  flex-direction: row;
+  align-items: center;
+  font-size: 30px;
+  font-weight: bold;
+  margin: 30px;
+}
