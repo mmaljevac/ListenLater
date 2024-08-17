@@ -22,6 +22,9 @@ header {
   flex: 1;
   padding: 1rem;
 }
+.headerLeft:hover {
+  color: #04ff43 !important;
+}
 
 .headerMiddle {
   flex: 1;
@@ -29,12 +32,13 @@ header {
   text-align: center;
   font-size: 2rem;
   font-weight: 700;
-  color: rgb(73, 255, 97);
+  color: #04ff43;
   transition: text-shadow 0.5s ease, scale 0.1s ease;
   animation: glow 3s infinite;
 }
 .headerMiddle:hover {
   scale: 110%;
+  color: #04ff43 !important;
 }
 
 .headerRight {
@@ -42,13 +46,16 @@ header {
   padding: 1rem;
   text-align: right;
 }
+.headerRight:hover {
+  color: #04ff43 !important;
+}
 
 @keyframes glow {
   0% {
     text-shadow: 0 0 0;
   }
   50% {
-    text-shadow: 0 0 20px rgb(30, 255, 0);
+    text-shadow: 0 0 20px #04ff43;
   }
   100% {
     text-shadow: 0 0 0;
@@ -137,7 +144,7 @@ a {
   text-decoration: none;
 }
 a:hover {
-  color: #1ee21e;
+  color: #04ff43;
 }
 a:active {
   opacity: 50%;
@@ -162,14 +169,14 @@ button {
   border-radius: 50px;
   cursor: pointer;
   transition: background-color 0.1s ease, padding 0.1s ease;
-  background-color: #13be21;
+  background-color: #1ab327;
   color: #fff;
 }
 button:hover {
   background-color: #0f8b2e;
 }
 button:active {
-  background-color: rgb(12, 102, 21);
+  background-color: #0c5c20;
 }
 button:disabled {
   background-color: #000000; /* Možeš prilagoditi ovu boju za onemogućeni gumb */
@@ -189,7 +196,7 @@ input {
   margin: 5px;
 }
 input:focus {
-  border-color: #1ee21e;
+  border-color: #1ab327;
 }
 
 .searchBubble {
@@ -209,7 +216,8 @@ table {
   margin-bottom: 20px;
 }
 
-th, td {
+th,
+td {
   padding: 8px;
   text-align: left;
 }
@@ -280,4 +288,16 @@ tbody tr:hover {
     transform: translateY(0);
     opacity: 1;
   }
+}
+.yt-link {
+  position: relative;
+}
+.yt-link::before {
+  content: "▶";
+  position: absolute;
+  left: -25px;
+  opacity: 0;
+}
+.yt-link:hover::before {
+  opacity: 1;
 }/*# sourceMappingURL=index.css.map */

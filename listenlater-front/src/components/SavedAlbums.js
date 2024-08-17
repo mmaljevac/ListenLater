@@ -7,7 +7,6 @@ const SavedAlbums = () => {
   const navigate = useNavigate();
 
   const [savedAlbums, setSavedAlbums] = useState([]);
-  const [actionType, setActionType] = useState('LISTEN_LATER');
   const { actionParam } = useParams();
 
   const fetchAlbums = async () => {
@@ -57,7 +56,8 @@ const SavedAlbums = () => {
   };
   return curUser ? (
     <div className="content">
-      <div style={{ textAlign: "center", margin: "20px 0" }}>
+      <h1>Saved Albums</h1>
+      <div style={{ textAlign: "center", margin: "0px 0" }}>
         <button
           onClick={() => navigate(`/savedAlbums/LISTEN_LATER`)}
           disabled={actionParam === "LISTEN_LATER"}
@@ -83,27 +83,27 @@ const SavedAlbums = () => {
       <ul className="fly-up">
         {savedAlbums.length !== 0 ? (
           savedAlbums
-          .filter(sa => sa.action === actionParam)
-          .map((sa) => (
-            <li key={sa.album.name}>
-              <div
-                className="closeButton"
-                onClick={(e) => handleDelete(sa.album.id)}
-              >
-                ❌
-              </div>
-              <Link
-                to={`/albums/${sa.album.artist.replace(
-                  / /g,
-                  "+"
-                )}/${sa.album.name.replace(/ /g, "+")}`}
-              >
-                <img src={sa.album.imgUrl} /> <br />
-                {sa.album.name}
-                <div className="artist">{sa.album.artist}</div>
-              </Link>
-            </li>
-          ))
+            .filter((sa) => sa.action === actionParam)
+            .map((sa) => (
+              <li key={sa.album.name}>
+                <div
+                  className="closeButton"
+                  onClick={(e) => handleDelete(sa.album.id)}
+                >
+                  ❌
+                </div>
+                <Link
+                  to={`/albums/${sa.album.artist.replace(
+                    / /g,
+                    "+"
+                  )}/${sa.album.name.replace(/ /g, "+")}`}
+                >
+                  <img src={sa.album.imgUrl} /> <br />
+                  {sa.album.name}
+                  <div className="artist">{sa.album.artist}</div>
+                </Link>
+              </li>
+            ))
         ) : (
           <>
             <p>Click on the plus to add an album!</p>

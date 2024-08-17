@@ -1,3 +1,8 @@
+$primary-color: #1ab327;
+$secondary-color: #0f8b2e;
+$dark-green: #0c5c20;
+$bright-green: #04ff43;
+
 body {
   margin: 0;
   font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", "Roboto", "Oxygen",
@@ -23,6 +28,9 @@ header {
 .headerLeft {
   flex: 1;
   padding: 1rem;
+  &:hover {
+    color: $bright-green !important;
+  }
 }
 .headerMiddle {
   flex: 1;
@@ -30,17 +38,21 @@ header {
   text-align: center;
   font-size: 2rem;
   font-weight: 700;
-  color: rgb(73, 255, 97);
+  color: $bright-green;
   transition: text-shadow 0.5s ease, scale 0.1s ease;
   animation: glow 3s infinite;
   &:hover {
     scale: 110%;
+    color: $bright-green !important;
   }
 }
 .headerRight {
   flex: 1;
   padding: 1rem;
   text-align: right;
+  &:hover {
+    color: $bright-green !important;
+  }
 }
 
 @keyframes glow {
@@ -48,12 +60,15 @@ header {
     text-shadow: 0 0 0;
   }
   50% {
-    text-shadow: 0 0 20px rgb(30, 255, 0);
+    text-shadow: 0 0 20px $bright-green;
   }
   100% {
     text-shadow: 0 0 0;
   }
+}
 
+h1 {
+  margin-top: 0;
 }
 
 .content {
@@ -136,7 +151,7 @@ a {
   color: white;
   text-decoration: none;
   &:hover {
-    color:#1ee21e;
+    color: $bright-green;
   }
   &:active {
     opacity: 50%;
@@ -163,19 +178,19 @@ button {
   border-radius: 50px;
   cursor: pointer;
   transition: background-color 0.1s ease, padding 0.1s ease;
-  background-color: #13be21;
+  background-color: $primary-color;
   color: #fff;
   &:hover {
-    background-color: #0f8b2e;
+    background-color: $secondary-color;
     // padding: 10px 25px;
   }
   &:active {
-    background-color: rgb(12, 102, 21);
+    background-color: $dark-green;
   }
   &:disabled {
     background-color: #000000; /* Možeš prilagoditi ovu boju za onemogućeni gumb */
-    color: #666666;           /* Prilagodba boje teksta za onemogućeni gumb */
-    cursor: not-allowed; 
+    color: #666666; /* Prilagodba boje teksta za onemogućeni gumb */
+    cursor: not-allowed;
   }
 }
 
@@ -189,7 +204,7 @@ input {
   background-color: #ffffff;
   transition: border-color 0.3s ease;
   &:focus {
-    border-color: #1ee21e;
+    border-color: $primary-color;
   }
   margin: 5px;
 }
@@ -210,7 +225,8 @@ table {
   margin-bottom: 20px;
 }
 
-th, td {
+th,
+td {
   padding: 8px;
   text-align: left;
 }
@@ -280,3 +296,19 @@ tbody tr:hover {
     opacity: 1;
   }
 }
+
+.yt-link {
+  position: relative;
+
+  &::before {
+    content: "▶";
+    position: absolute;
+    left: -25px;
+    opacity: 0;
+  }
+
+  &:hover::before {
+    opacity: 1;
+  }
+}
+

@@ -11,7 +11,7 @@ const Home = () => {
       Admin room
     </Link>
   ) : (
-    <p>Hello, {curUser.username} 👋</p>
+    <h1>Hello, {curUser.username} 👋</h1>
   )}
   <Link to={"/savedAlbums/LISTEN_LATER"} className="link-box"><h2>🔖 My Saved Albums</h2></Link>
   <Link to={"/charts"} className="link-box"><h2>📈 Charts</h2></Link>

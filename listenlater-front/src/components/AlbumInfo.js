@@ -10,6 +10,7 @@ const Album = () => {
   const [albumInfo, setAlbumInfo] = useState([]);
   const [albumSaved, setAlbumSaved] = useState("");
   const [fadeIn, setFadeIn] = useState(false);
+  const [showAbout, setShowAbout] = useState(false);
 
   const fetchAlbumInfo = async () => {
     try {
@@ -85,7 +86,14 @@ const Album = () => {
     isAlbumSaved();
 
     setFadeIn(true);
-  }, []);
+
+    if (showAbout) {
+      window.scrollTo({
+        top: document.documentElement.scrollHeight,
+        behavior: "smooth",
+      });
+    }
+  }, [showAbout]);
 
   return (
     <div className="content">
@@ -126,16 +134,19 @@ const Album = () => {
               />
             </div>
 
-            <div
+            <Link
+              to={`https://www.youtube.com/results?search_query=${albumInfo.artist}+${albumInfo.name}`}
+              target="_blank"
               style={{
                 fontSize: "24px",
                 fontWeight: "bold",
                 marginTop: "20px",
                 textAlign: "center",
               }}
+              className="yt-link"
             >
               {albumInfo.name}
-            </div>
+            </Link>
             <Link
               to={`/artist/${artist}`}
               className="artist"
@@ -168,7 +179,13 @@ const Album = () => {
                     }}
                   >
                     <span style={{ color: "white", fontSize: "20px" }}>
-                      {index + 1}. {track.name}
+                      <Link
+                        to={`https://www.youtube.com/results?search_query=${albumInfo.artist}+${track.name}`}
+                        target="_blank"
+                        className="yt-link"
+                      >
+                        {index + 1}. {track.name}
+                      </Link>
                     </span>
                     <span style={{ color: "grey" }}>{formattedDuration}</span>
                   </div>
@@ -177,53 +194,69 @@ const Album = () => {
             </div>
           )}
 
+          <div style={{ margin: "30px 0 20px" }}>
+            <div style={{ textAlign: "center" }}>
+              {Number(albumInfo.listeners).toLocaleString()} listeners •{" "}
+              {Number(albumInfo.playcount).toLocaleString()} streams
+            </div>
+
+            {albumInfo.tags && (
+              <div className="artist" style={{ textAlign: "center" }}>
+                {Array.isArray(albumInfo.tags.tag) ? (
+                  albumInfo.tags.tag.slice(0, 4).map((tag, index) => (
+                    <span key={index}>
+                      {tag.name}
+                      {index < albumInfo.tags.tag.length - 2 ? " • " : ""}
+                    </span>
+                  ))
+                ) : (
+                  <span>{albumInfo.tags.tag.name}</span>
+                )}
+              </div>
+            )}
+          </div>
+
           <div style={{ textAlign: "center", margin: "20px 0" }}>
             <button
               onClick={() => handleAlbumSave(albumInfo, "LISTEN_LATER")}
               disabled={albumSaved === "LISTEN_LATER"}
               style={{ margin: "0 10px" }}
             >
-              ➕ Listen Later
+              {albumSaved === "LISTEN_LATER"
+                ? "Added to Listen Later"
+                : "➕ Listen Later"}
             </button>
             <button
               onClick={() => handleAlbumSave(albumInfo, "LIKE")}
               disabled={albumSaved === "LIKE"}
               style={{ margin: "0 10px" }}
             >
-              👍 Like
+              {albumSaved === "LIKE" ? "Liked" : "👍 Like"}
             </button>
             <button
               onClick={() => handleAlbumSave(albumInfo, "DISLIKE")}
               disabled={albumSaved === "DISLIKE"}
               style={{ margin: "0 10px" }}
             >
-              👎 Dislike
+              {albumSaved === "DISLIKE" ? "Disliked" : "👎 Dislike"}
             </button>
           </div>
 
-          <div style={{ textAlign: "center", marginBottom: "10px" }}>
-            Playcount: {albumInfo.playcount}
-          </div>
-
-          {albumInfo.tags && (
-            <div style={{ textAlign: "center", marginBottom: "10px" }}>
-              Tags:{" "}
-              {albumInfo.tags?.tag?.slice(0, 4).map((tag, index) => (
-                <span key={index}>
-                  {tag.name}
-                  {index < albumInfo.tags.tag.length - 2 ? ", " : ""}
-                </span>
-              ))}
-            </div>
-          )}
-
           {albumInfo.wiki && (
-            <div style={{ textAlign: "justify", margin: "10px 0 50px" }}>
-              <hr />
-              {albumInfo.wiki.summary
-                .replace(/<a\b[^>]*>(.*?)<\/a>/gi, "")
-                .slice(0, -1)}
-            </div>
+            <>
+              <h3 onClick={() => setShowAbout(!showAbout)}>
+                <Link>
+                  {!showAbout ? "Show album info" : "Hide album info"}
+                </Link>
+              </h3>
+              <div style={{ marginBottom: "100px" }}>
+                {showAbout && (
+                  <div className="artist" style={{ textAlign: "justify" }}>
+                    {albumInfo.wiki.content.split("<a")[0]}
+                  </div>
+                )}
+              </div>
+            </>
           )}
         </>
       )}
