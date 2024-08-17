@@ -6,15 +6,12 @@ const Admin = () => {
   const curUser = useSelector((state) => state.curUser);
 
   const [users, setUsers] = useState([]);
-  const [albums, setAlbums] = useState([]);
 
   useEffect(() => {
-    if (!(curUser && curUser.admin)) {
+    if (!(curUser && curUser.role === "ADMIN")) {
       return <Navigate to={{ pathname: "/" }} />;
     }
-
     fetchUsers();
-    fetchAlbums();
   }, [curUser]);
 
   const fetchUsers = async () => {
@@ -22,6 +19,7 @@ const Admin = () => {
       method: "GET",
     })
       .then((response) => {
+        console.log(response);
         if (!response.ok) {
           throw new Error(`HTTP error! Status: ${response.status}`);
         }
@@ -29,27 +27,7 @@ const Admin = () => {
       })
       .then((data) => {
         if (data) {
-          setUsers(data);
-        }
-      })
-      .catch((error) => {
-        console.error("Fetch error:", error);
-      });
-  };
-
-  const fetchAlbums = async () => {
-    await fetch(`http://localhost:8080/albums`, {
-      method: "GET",
-    })
-      .then((response) => {
-        if (!response.ok) {
-          throw new Error(`HTTP error! Status: ${response.status}`);
-        }
-        return response.json();
-      })
-      .then((data) => {
-        if (data) {
-          setAlbums(data);
+          setUsers(data.data);
         }
       })
       .catch((error) => {
@@ -69,30 +47,8 @@ const Admin = () => {
       })
       .then((data) => {
         if (data) {
-          const updatedUsers = users.filter((user) => user.id !== id);
-          setUsers(updatedUsers);
-          const updatedAlbums = albums.filter((album) => album.idUser !== id);
-          setAlbums(updatedAlbums);
+          fetchUsers();
         }
-      })
-      .catch((error) => {
-        console.error("Fetch error:", error);
-      });
-  };
-
-  const handleDeleteAlbum = async (id) => {
-    await fetch(`http://localhost:8080/albums/${id}`, {
-      method: "DELETE",
-    })
-      .then((response) => {
-        if (!response.ok) {
-          throw new Error(`HTTP error! Status: ${response.status}`);
-        }
-        return response.json();
-      })
-      .then((data) => {
-        const updatedAlbums = albums.filter((album) => album.id !== id);
-        setAlbums(updatedAlbums);
       })
       .catch((error) => {
         console.error("Fetch error:", error);
@@ -100,95 +56,69 @@ const Admin = () => {
   };
 
   const updatePermission = async (user) => {
-    await fetch(`http://localhost:8080/users/updatePermission/${user.id}`, {
+    let newRole = "USER";
+    if (user.role === "USER") newRole = "ADMIN";
+    await fetch(`http://localhost:8080/users/updateUserRole/${user.id}`, {
       method: "PATCH",
+      headers: {
+        "Content-Type": "application/json",
+      },
+      body: JSON.stringify({ string: newRole }),
     })
       .then((response) => {
-        console.log(response);
         if (!response.ok) {
           throw new Error(`HTTP error! Status: ${response.status}`);
         }
         return response.json();
       })
-      .then((data) => {
-        console.log("data:");
-        console.log(data);
-        if (data) {
-          alert(data.message);
-          setUsers((prevUsers) => {
-            return prevUsers.map((prevUser) => {
-              if (prevUser.id === user.id) {
-                return { ...prevUser, admin: !user.admin };
-              }
-              return prevUser;
-            });
-          });
-        }
+      .then(() => {
+        fetchUsers();
       })
       .catch((error) => {
         console.error("Fetch error:", error);
       });
   };
 
+  useEffect(() => {
+    fetchUsers();
+  }, []);
+
   return (
-    <div>
-      <h2>Users</h2>
-      <table>
-        <thead>
-          <tr>
-            <th>ID</th>
-            <th>Username</th>
-            <th>Admin</th>
-            <th>Action</th>
-          </tr>
-        </thead>
-        <tbody>
-          {users &&
-            users.map((user) => (
-              <tr key={user.id}>
-                <td>{user.id}</td>
-                <td>{user.username}</td>
-                <td>
-                  <Link onClick={() => updatePermission(user)}>
-                    {user.admin ? "Yes" : "No"}
-                  </Link>
-                </td>
-                <td>
-                  <Link onClick={() => handleDeleteUser(user.id)}>Delete</Link>
-                </td>
+    <>
+      {users && users.length > 0 && (
+        <>
+          <h2>Users</h2>
+          <table>
+            <thead>
+              <tr>
+                <th>ID</th>
+                <th>Username</th>
+                <th>Role</th>
+                <th>Action</th>
               </tr>
-            ))}
-        </tbody>
-      </table>
-      <h2>Saved albums</h2>
-      <table>
-        <thead>
-          <tr>
-            <th>ID</th>
-            <th>Name</th>
-            <th>Artist</th>
-            <th>UserID</th>
-            <th>Action</th>
-          </tr>
-        </thead>
-        <tbody>
-          {albums &&
-            albums.map((album) => (
-              <tr key={album.id}>
-                <td>{album.id}</td>
-                <td>{album.name}</td>
-                <td>{album.artist}</td>
-                <td>{album.idUser}</td>
-                <td>
-                  <Link onClick={() => handleDeleteAlbum(album.id)}>
-                    Delete
-                  </Link>
-                </td>
-              </tr>
-            ))}
-        </tbody>
-      </table>
-    </div>
+            </thead>
+            <tbody>
+              {users.map((user) => (
+                <tr key={user.id}>
+                  <td>{user.id}</td>
+                  <td>{user.username}</td>
+                  <td>
+                    <Link onClick={() => updatePermission(user)}>
+                      {user.role}
+                    </Link>
+                  </td>
+                  <td>
+                    <Link onClick={() => handleDeleteUser(user.id)}>
+                      Delete
+                    </Link>
+                  </td>
+                </tr>
+              ))}
+            </tbody>
+          </table>
+        </>
+      )}
+    </>
   );
 };
 
