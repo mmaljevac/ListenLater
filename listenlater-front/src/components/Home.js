@@ -13,7 +13,7 @@ const Home = () => {
   ) : (
     <p>Hello, {curUser.username} 👋</p>
   )}
-  <Link to={"/savedAlbums"} className="link-box"><h2>🔖 My Saved Albums</h2></Link>
+  <Link to={"/savedAlbums/LISTEN_LATER"} className="link-box"><h2>🔖 My Saved Albums</h2></Link>
   <Link to={"/charts"} className="link-box"><h2>📈 Charts</h2></Link>
   <Link to={"/search"} className="link-box"><h2>🔎 Search</h2></Link>
 </div>

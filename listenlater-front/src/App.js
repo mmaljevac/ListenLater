@@ -24,7 +24,7 @@ function App() {
         <Route path="/albums/:artist/:albumName" element={<AlbumInfo />}></Route>
         <Route path="/artist/:artist" element={<ArtistInfo />}></Route>
         <Route path="/charts" element={<Charts />}></Route>
-        <Route path="/savedAlbums" element={<SavedAlbums />}></Route>
+        <Route path="/savedAlbums/:actionParam" element={<SavedAlbums />}></Route>
         <Route path="/admin" element={<Admin />}></Route>
       </Routes>
     </Router>

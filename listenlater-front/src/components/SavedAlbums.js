@@ -1,12 +1,14 @@
 import { useEffect, useState } from "react";
 import { useSelector } from "react-redux";
-import { Link, Navigate } from "react-router-dom";
+import { Link, Navigate, useNavigate, useParams } from "react-router-dom";
 
 const SavedAlbums = () => {
   const curUser = useSelector((state) => state.curUser);
+  const navigate = useNavigate();
 
   const [savedAlbums, setSavedAlbums] = useState([]);
   const [actionType, setActionType] = useState('LISTEN_LATER');
+  const { actionParam } = useParams();
 
   const fetchAlbums = async () => {
     if (curUser) {
@@ -57,22 +59,22 @@ const SavedAlbums = () => {
     <div className="content">
       <div style={{ textAlign: "center", margin: "20px 0" }}>
         <button
-          onClick={() => setActionType('LISTEN_LATER')}
-          disabled={actionType === "LISTEN_LATER"}
+          onClick={() => navigate(`/savedAlbums/LISTEN_LATER`)}
+          disabled={actionParam === "LISTEN_LATER"}
           style={{ margin: "0 10px" }}
         >
           🎧 Listen Later
         </button>
         <button
-          onClick={() => setActionType('LIKE')}
-          disabled={actionType === "LIKE"}
+          onClick={() => navigate(`/savedAlbums/LIKE`)}
+          disabled={actionParam === "LIKE"}
           style={{ margin: "0 10px" }}
         >
           Liked
         </button>
         <button
-          onClick={() => setActionType('DISLIKE')}
-          disabled={actionType === "DISLIKE"}
+          onClick={() => navigate(`/savedAlbums/DISLIKE`)}
+          disabled={actionParam === "DISLIKE"}
           style={{ margin: "0 10px" }}
         >
           Disliked
@@ -81,7 +83,7 @@ const SavedAlbums = () => {
       <ul className="fly-up">
         {savedAlbums.length !== 0 ? (
           savedAlbums
-          .filter(sa => sa.action === actionType)
+          .filter(sa => sa.action === actionParam)
           .map((sa) => (
             <li key={sa.album.name}>
               <div
