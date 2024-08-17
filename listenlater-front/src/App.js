@@ -18,7 +18,7 @@ function App() {
       <Routes>
         <Route path="/" element={<Home />}></Route>
         <Route
-          path="/search/:entity/:searchParam?"
+          path="/search/:searchParam?"
           element={<Search />}
         ></Route>
         <Route path="/login" element={<Login />}></Route>

@@ -62,7 +62,7 @@ const UserProfile = () => {
         </div>
         <div>{userName}</div>
       </div>
-      <h1>
+      <h1 style={{ marginTop: '0' }}>
         {userName === curUser.username ? "My" : `${userName}'s`} Saved Albums
       </h1>
       <div style={{ textAlign: "center", margin: "0px 0" }}>

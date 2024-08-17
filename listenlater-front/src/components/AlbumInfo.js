@@ -249,13 +249,11 @@ const Album = () => {
                   {!showAbout ? "Show album info" : "Hide album info"}
                 </Link>
               </h3>
-              <div style={{ marginBottom: "100px" }}>
-                {showAbout && (
-                  <div className="artist" style={{ textAlign: "justify" }}>
-                    {albumInfo.wiki.content.split("<a")[0]}
-                  </div>
-                )}
-              </div>
+              {showAbout && (
+                <div className="artist" style={{ textAlign: "justify" }}>
+                  {albumInfo.wiki.content.split("<a")[0]}
+                </div>
+              )}
             </>
           )}
         </>

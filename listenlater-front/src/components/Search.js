@@ -1,5 +1,5 @@
 import { useEffect, useRef, useState } from "react";
-import { Navigate, useNavigate, useParams } from "react-router-dom";
+import { Link, Navigate, useNavigate, useParams } from "react-router-dom";
 import { useSelector } from "react-redux";
 
 const Search = () => {
@@ -7,39 +7,36 @@ const Search = () => {
   const navigate = useNavigate();
 
   const [searchTerm, setSearchTerm] = useState("");
-  const [searchResults, setSearchResults] = useState([]);
+  const [albumResults, setAlbumResults] = useState([]);
+  const [artistResults, setArtistResults] = useState([]);
+  const [userResults, setUserResults] = useState([]);
+  const [entityType, setEntityType] = useState("");
   const [searchTrigger, setSearchTrigger] = useState(false);
 
-  const { entity, searchParam } = useParams();
+  const { searchParam } = useParams();
   const searchInputRef = useRef(null);
 
   const handleSearch = () => {
+    setEntityType("");
     if (searchTerm !== "") {
-      navigate(`/search/${entity}/${searchTerm}`);
+      navigate(`/search/${searchTerm}`);
       setSearchTrigger(!searchTrigger);
     }
   };
 
-  const fetchAlbumsArtists = async () => {
+  const fetchAlbumsArtists = async (entity) => {
     if (searchParam && searchParam.length !== 0) {
       try {
         const response = await fetch(
           // TODO url constants
-          `https://ws.audioscrobbler.com/2.0/?method=${entity.slice(
-            0,
-            -1
-          )}.search&${entity.slice(
-            0,
-            -1
-          )}=${searchParam}&limit=30&api_key=6114c4f9da678af26ac5a4afc15d9c4f&format=json`
+          `https://ws.audioscrobbler.com/2.0/?method=${entity}.search&${entity}=${searchParam}&limit=30&api_key=6114c4f9da678af26ac5a4afc15d9c4f&format=json`
         );
         const data = await response.json();
 
-        if (entity === "albums")
-          setSearchResults(data.results.albummatches.album);
-        else if (entity === "artists")
-          setSearchResults(data.results.artistmatches.artist);
-        console.log(searchResults);
+        if (entity === "album")
+          setAlbumResults(data.results.albummatches.album);
+        else if (entity === "artist")
+          setArtistResults(data.results.artistmatches.artist);
       } catch (error) {
         console.error("Error fetching data:", error);
       }
@@ -60,28 +57,13 @@ const Search = () => {
         );
         const payload = await response.json();
         if (response.ok) {
-          setSearchResults(payload.data);
+          setUserResults(payload.data);
         } else if (response.status === 404) {
           console.log(response.message);
         }
       } catch (error) {
         throw new Error(`Fetch error: ${error}`);
       }
-    }
-  };
-
-  const goToInfoPage = (item) => {
-    if (entity === "albums") {
-      navigate(
-        `/albums/${item.artist.replace(/ /g, "+")}/${item.name.replace(
-          / /g,
-          "+"
-        )}`
-      );
-    } else if (entity === "artists") {
-      navigate(`/artist/${item.artist.replace(/ /g, "+")}}`);
-    } else if (entity === "users") {
-      navigate(`/user/${item.username}/LISTEN_LATER`);
     }
   };
 
@@ -93,12 +75,14 @@ const Search = () => {
   };
 
   useEffect(() => {
-    if (entity === "albums" || entity === "artists") fetchAlbumsArtists();
-    else if (entity === "users") fetchUsers();
+    fetchAlbumsArtists("album");
+    fetchAlbumsArtists("artist");
+    fetchUsers();
 
     if (searchInputRef.current) {
       searchInputRef.current.focus();
     }
+    setSearchTerm(searchParam);
   }, [searchTrigger]);
 
   return curUser ? (
@@ -109,45 +93,153 @@ const Search = () => {
         ref={searchInputRef}
         onChange={(e) => setSearchTerm(e.target.value)}
         onKeyDown={handleKeyPress}
-        placeholder={`${entity.slice(0, -1)} name`}
+        placeholder={"Album / artist / user"}
         className="searchBubble"
         style={{ marginBottom: "20px" }}
       />
       <button onClick={handleSearch}>Search</button>
-      <ul className="seachUl">
-        {searchResults.map((item, index) => (
-          <li
-            className="searchLi"
-            key={index}
-            onClick={() => goToInfoPage(item)}
-          >
-            <a>
-              <div className="searchItems">
-                {(entity === "albums" || entity === "artists") && (
-                  <img
-                    src={item.image[3]["#text"]}
-                    style={{
-                      width: "150px",
-                      borderRadius: entity === "artists" ? "50%" : undefined,
-                    }}
-                  />
-                )}
 
-                {entity === "users" && (
-                  <div className="user-bubble">{item.username.charAt(0)}</div>
-                )}
+      {albumResults.length > 0 &&
+        (entityType === "" || entityType === "album") && (
+          <div className="fly-up entity-class">
+            <h1 style={{ margin: "0" }}>
+              <Link
+                onClick={() =>
+                  entityType === "" ? setEntityType("album") : setEntityType("")
+                }
+              >
+                Albums
+              </Link>
+            </h1>
+            <ul className="seachUl">
+              {albumResults
+                .slice(0, entityType !== "album" ? 3 : albumResults.length)
+                .map((item, index) => (
+                  <li
+                    className="searchLi"
+                    key={index}
+                    onClick={() =>
+                      navigate(
+                        `/albums/${item.artist.replace(
+                          / /g,
+                          "+"
+                        )}/${item.name.replace(/ /g, "+")}`
+                      )
+                    }
+                  >
+                    <a>
+                      <div className="searchItems">
+                        <img
+                          src={item.image[3]["#text"]}
+                          style={{
+                            width: "100px",
+                          }}
+                        />
 
-                <aside>
-                  <div>{entity === "users" ? item.username : item.name}</div>
-                  {entity === "albums" && (
-                    <div className="artist">{item.artist}</div>
-                  )}
-                </aside>
-              </div>
-            </a>
-          </li>
-        ))}
-      </ul>
+                        <aside>
+                          <div>{item.name}</div>
+                          <div className="artist">{item.artist}</div>
+                        </aside>
+                      </div>
+                    </a>
+                  </li>
+                ))}
+            </ul>
+          </div>
+        )}
+
+      {artistResults.length > 0 &&
+        (entityType === "" || entityType === "artist") && (
+          <div className="fly-up">
+            <h1 style={{ margin: "0" }}>
+              <Link
+                onClick={() =>
+                  entityType === ""
+                    ? setEntityType("artist")
+                    : setEntityType("")
+                }
+              >
+                Artists
+              </Link>
+            </h1>
+            <ul className="seachUl">
+              {artistResults
+                .slice(0, entityType !== "artist" ? 3 : albumResults.length)
+                .map((item, index) => (
+                  <li
+                    className="searchLi"
+                    key={index}
+                    onClick={() =>
+                      navigate(`/artist/${item.artist.replace(/ /g, "+")}}`)
+                    }
+                  >
+                    <a>
+                      <div className="searchItems">
+                        <img
+                          src={item.image[3]["#text"]}
+                          style={{
+                            width: "80px",
+                            borderRadius: "50%",
+                          }}
+                        />
+
+                        <aside>
+                          <div>{item.name}</div>
+                        </aside>
+                      </div>
+                    </a>
+                  </li>
+                ))}
+            </ul>
+          </div>
+        )}
+
+      {userResults.length > 0 &&
+        (entityType === "" || entityType === "user") && (
+          <div className="fly-up">
+            <h1 style={{ margin: "0" }}>
+              <Link
+                onClick={() =>
+                  entityType === "" ? setEntityType("user") : setEntityType("")
+                }
+              >
+                Users
+              </Link>
+            </h1>
+            <ul className="seachUl">
+              {userResults
+                .slice(0, entityType !== "user" ? 3 : albumResults.length)
+                .map((item, index) => (
+                  <li
+                    className="searchLi"
+                    key={index}
+                    onClick={() =>
+                      navigate(`/user/${item.username}/LISTEN_LATER`)
+                    }
+                  >
+                    <a>
+                      <div className="searchItems">
+                        <div
+                          className="user-bubble"
+                          style={{
+                            width: "80px",
+                            height: "80px",
+                            fontSize: "40px",
+                          }}
+                        >
+                          {item.username.charAt(0)}
+                        </div>
+
+                        <aside>
+                          <div>{item.username}</div>
+                        </aside>
+                      </div>
+                    </a>
+                  </li>
+                ))}
+            </ul>
+          </div>
+        )}
     </div>
   ) : (
     <Navigate to={{ pathname: "/login" }} />

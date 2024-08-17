@@ -13,14 +13,8 @@ const Home = () => {
       <Link to={"/charts"} className="link-box">
         <h2>📈 Charts</h2>
       </Link>
-      <Link to={"/search/albums"} className="link-box">
-        <h2>💽 Albums</h2>
-      </Link>
-      <Link to={"/search/artists"} className="link-box">
-        <h2>🎤 Artists</h2>
-      </Link>
-      <Link to={"/search/users"} className="link-box">
-        <h2>👤 Search users</h2>
+      <Link to={"/search"} className="link-box">
+        <h2>🔎 Search</h2>
       </Link>
       {curUser.role === "ADMIN" && (
         <Link to={"/admin"} className="link-box">
