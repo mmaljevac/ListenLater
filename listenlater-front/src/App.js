@@ -17,7 +17,7 @@ function App() {
       <Header />
       <Routes>
         <Route path="/" element={<Home />}></Route>
-        <Route path="/search" element={<Search />}></Route>
+        <Route path="/search/:searchParam?" element={<Search />}></Route>
         <Route path="/login" element={<Login />}></Route>
         <Route path="/account" element={<Account />}></Route>
         <Route path="/register" element={<Register />}></Route>

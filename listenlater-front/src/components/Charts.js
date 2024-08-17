@@ -2,6 +2,7 @@ import { useEffect, useState } from "react";
 
 const Charts = () => {
   const [tracks, setTracks] = useState([]);
+  const [artists, setArtists] = useState([]);
 
   const fetchCharts = async () => {
     try {
@@ -11,6 +12,16 @@ const Charts = () => {
       const data = await response.json();
       setTracks(data.tracks.track)
       console.log(data.tracks.track);
+    } catch (error) {
+      console.error("Error fetching data:", error);
+    }
+    try {
+      const response = await fetch(
+        `https://ws.audioscrobbler.com/2.0/?method=chart.gettopartists&format=json&limit=10&api_key=6114c4f9da678af26ac5a4afc15d9c4f&format=json`
+      );
+      const data = await response.json();
+      setArtists(data.artists.artist)
+      console.log(data.artists.artist);
     } catch (error) {
       console.error("Error fetching data:", error);
     }
@@ -26,14 +37,6 @@ const Charts = () => {
   }, []);
   return (
     <div>
-    <div>
-      <button onClick={() => handleSwitch("tracks")} disabled={activeChart === "tracks"}>
-        Tracks
-      </button>
-      <button onClick={() => handleSwitch("artists")} disabled={activeChart === "artists"}>
-        Artists
-      </button>
-    </div>
 
     {activeChart === "tracks" ? (
       <div>
@@ -59,7 +62,11 @@ const Charts = () => {
     ) : (
       <div>
         <h2>Top Artists</h2>
-        {/* Prikaz artist chartova */}
+        {artists && (
+          artists.map(artist => (
+            <div key={artist.name}>awd</div>
+          ))
+        )}
       </div>
     )}
   </div>

@@ -14,6 +14,7 @@ header {
   display: flex;
   justify-content: space-between;
   align-items: center;
+  font-weight: bold;
   min-width: 500px;
 }
 
@@ -81,7 +82,7 @@ li {
   padding: 20px;
   width: 28%;
   cursor: pointer;
-  animation: flyUp 0.5s ease-in-out both;
+  animation: flyUp 0.5s forwards;
 }
 li:hover .closeButton {
   visibility: visible;
@@ -145,16 +146,6 @@ a:hover img {
   box-shadow: 0 10px 20px rgba(0, 0, 0, 0.205);
 }
 
-@keyframes flyUp {
-  from {
-    transform: translateY(50px);
-    opacity: 0;
-  }
-  to {
-    transform: translateY(0);
-    opacity: 1;
-  }
-}
 .artist {
   color: rgb(173, 173, 173);
   font-size: 1rem;
@@ -263,4 +254,30 @@ tbody tr:hover {
 
 .admin-link {
   color: red;
+}
+
+.fade-in {
+  opacity: 0;
+  animation: fadeIn 1s forwards;
+}
+
+@keyframes fadeIn {
+  to {
+    opacity: 1;
+  }
+}
+.fly-up {
+  opacity: 0;
+  animation: flyUp 1s forwards;
+}
+
+@keyframes flyUp {
+  from {
+    transform: translateY(50px);
+    opacity: 0;
+  }
+  to {
+    transform: translateY(0);
+    opacity: 1;
+  }
 }/*# sourceMappingURL=index.css.map */

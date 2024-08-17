@@ -1,5 +1,5 @@
 import { useEffect, useRef, useState } from "react";
-import { Navigate, useNavigate } from "react-router-dom";
+import { Navigate, useNavigate, useParams } from "react-router-dom";
 import { useSelector } from "react-redux";
 
 const Search = () => {
@@ -8,35 +8,46 @@ const Search = () => {
 
   const [searchTerm, setSearchTerm] = useState("");
   const [searchResults, setSearchResults] = useState([]);
+  const [searchTrigger, setSearchTrigger] = useState(false);
 
+  const { searchParam } = useParams();
   const searchInputRef = useRef(null);
 
   const handleSearch = async () => {
-    if (searchTerm) {
+    if (searchTerm !== '') {
+      navigate(`/search/${searchTerm}`)
+      setSearchTrigger(!searchTrigger);
+    }
+  };
+
+  const fetchData = async () => {
+    if (searchParam && searchParam.length !== 0) {
       try {
+        console.log("here")
         const response = await fetch(
           // TODO url constants
-          `https://ws.audioscrobbler.com/2.0/?method=album.search&album=${searchTerm}&limit=30&api_key=6114c4f9da678af26ac5a4afc15d9c4f&format=json`
+          `https://ws.audioscrobbler.com/2.0/?method=album.search&album=${searchParam}&limit=30&api_key=6114c4f9da678af26ac5a4afc15d9c4f&format=json`
         );
         const data = await response.json();
-        console.log(data)
 
         setSearchResults(data.results.albummatches.album);
       } catch (error) {
         console.error("Error fetching data:", error);
       }
     }
-  };
+  }
 
   useEffect(() => {
+    fetchData();
     if (searchInputRef.current) {
       searchInputRef.current.focus();
     }
-  }, []);
+  }, [searchTrigger]);
 
   const handleKeyPress = (event) => {
     if (event.key === "Enter") {
       handleSearch();
+      setSearchTrigger(!searchTrigger);
     }
   };
 
@@ -51,7 +62,7 @@ const Search = () => {
         placeholder="Album/artist name"
         className="searchBubble"
         style={{ marginBottom: '20px' }}
-      />{" "}
+      />
       <br></br>
       <button onClick={handleSearch}>Search</button>
       <ul className="seachUl">

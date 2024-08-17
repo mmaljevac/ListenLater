@@ -9,6 +9,7 @@ const Album = () => {
 
   const [albumInfo, setAlbumInfo] = useState([]);
   const [albumSaved, setAlbumSaved] = useState("");
+  const [fadeIn, setFadeIn] = useState(false);
 
   const fetchAlbumInfo = async () => {
     try {
@@ -48,7 +49,7 @@ const Album = () => {
 
   const handleAlbumSave = async (album, action) => {
     const name = album.name;
-    const artist = album.artist;
+    const artistName = album.artist;
     const fullName = (artist + "/" + name).replace(/ /g, "+");
     const imgUrl = album.image[3]["#text"];
 
@@ -63,7 +64,7 @@ const Album = () => {
           body: JSON.stringify({
             fullName,
             name,
-            artist,
+            artist: artistName,
             imgUrl,
           }),
         }
@@ -82,15 +83,16 @@ const Album = () => {
   useEffect(() => {
     fetchAlbumInfo();
     isAlbumSaved();
+
+    setFadeIn(true);
   }, []);
 
   return (
     <div className="content">
-      {!albumInfo.name ? (
-        "Loading..."
-      ) : (
+      {albumInfo.name && (
         <>
           <div
+            className={`${fadeIn ? "fade-in" : ""}`}
             style={{
               display: "flex",
               flexDirection: "column",
@@ -135,7 +137,7 @@ const Album = () => {
               {albumInfo.name}
             </div>
             <Link
-              to="/artist/"
+              to={`/artist/${artist}`}
               className="artist"
               style={{
                 fontSize: "18px",

@@ -78,7 +78,7 @@ const SavedAlbums = () => {
           Disliked
         </button>
       </div>
-      <ul>
+      <ul className="fly-up">
         {savedAlbums.length !== 0 ? (
           savedAlbums
           .filter(sa => sa.action === actionType)
