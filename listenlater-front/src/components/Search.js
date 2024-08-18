@@ -37,6 +37,7 @@ const Search = () => {
           setAlbumResults(data.results.albummatches.album);
         else if (entity === "artist")
           setArtistResults(data.results.artistmatches.artist);
+        console.log(data)
       } catch (error) {
         console.error("Error fetching data:", error);
       }
@@ -170,7 +171,7 @@ const Search = () => {
                     className="searchLi"
                     key={index}
                     onClick={() =>
-                      navigate(`/artist/${item.artist.replace(/ /g, "+")}}`)
+                      navigate(`/artist/${item.name.replace(/ /g, "+")}`)
                     }
                   >
                     <a>

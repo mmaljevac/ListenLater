@@ -1,44 +1,266 @@
 import { useEffect, useState } from "react";
 import { useSelector } from "react-redux";
-import { useParams } from "react-router-dom";
+import { Link, useParams } from "react-router-dom";
+import Track from "./Track";
 
 const ArtistInfo = () => {
-  
   const curUser = useSelector((state) => state.curUser);
 
   const { artist } = useParams();
 
   const [artistInfo, setArtistInfo] = useState([]);
+  const [artistImg, setArtistImg] = useState([]);
+  const [topTracks, setTopTracks] = useState([]);
+  const [topAlbums, setTopAlbums] = useState([]);
+  const [showAbout, setShowAbout] = useState(false);
   const [fadeIn, setFadeIn] = useState(false);
 
-  const fetchArtistInfo = async () => {
+  const fetchArtistInfo = async (artistName) => {
+    let mbid;
+
+    // artist info
     try {
       const response = await fetch(
-        `https://ws.audioscrobbler.com/2.0/?method=artist.getinfo&artist=${artist}&api_key=6114c4f9da678af26ac5a4afc15d9c4f&format=json`
+        `https://ws.audioscrobbler.com/2.0/?method=artist.getinfo&artist=${artistName}&api_key=6114c4f9da678af26ac5a4afc15d9c4f&format=json`
       );
       const data = await response.json();
-      setArtistInfo(data.album);
-      console.log(data)
-      console.log(data.artist.image[3]['#text'])
+      setArtistInfo(data.artist);
+      console.log("artist");
+      console.log(data.artist);
+      mbid = data.artist.mbid;
     } catch (error) {
       console.error("Error fetching data:", error);
     }
 
+    // top tracks
+    try {
+      const response = await fetch(
+        `https://ws.audioscrobbler.com/2.0/?method=artist.gettoptracks&artist=${artistName}&api_key=6114c4f9da678af26ac5a4afc15d9c4f&format=json&limit=10`
+      );
+      const data = await response.json();
+      setTopTracks(data.toptracks.track);
+      console.log("TRACKS");
+      console.log(data.toptracks.track);
+    } catch (error) {
+      console.error("Error fetching data:", error);
+    }
+
+    // top albums
+    try {
+      const response = await fetch(
+        `https://ws.audioscrobbler.com/2.0/?method=artist.gettopalbums&artist=${artistName}&api_key=6114c4f9da678af26ac5a4afc15d9c4f&format=json&limit=5`
+      );
+      const data = await response.json();
+      setTopAlbums(data.topalbums.album);
+      console.log("ALBUMS");
+      console.log(data.topalbums.album);
+    } catch (error) {
+      console.error("Error fetching data:", error);
+    }
+
+    // img from mbid
+    try {
+      setArtistImg("");
+      const response = await fetch(
+        `https://musicbrainz.org/ws/2/artist/${mbid}?inc=url-rels&fmt=json`
+      );
+      const data = await response.json();
+      console.log("mbid");
+      console.log(data);
+
+      if (!data.relations) return;
+
+      for (let i = 0; i < data.relations.length; i++) {
+        if (data.relations[i].type === "image") {
+          console.log("IMAGE");
+          let image_url = data.relations[i].url.resource;
+          if (
+            image_url.startsWith("https://commons.wikimedia.org/wiki/File:")
+          ) {
+            const filename = image_url.substring(
+              image_url.lastIndexOf("/") + 1
+            );
+            image_url =
+              "https://commons.wikimedia.org/wiki/Special:Redirect/file/" +
+              filename;
+          }
+          setArtistImg(image_url);
+        }
+      }
+    } catch (error) {
+      console.error("Error fetching data:", error);
+    }
   };
 
   useEffect(() => {
-    fetchArtistInfo();
+    fetchArtistInfo(artist);
 
     setFadeIn(true);
-  }, []);
+  }, [artist]);
   return (
-    <div className="content">
-      {artistInfo && artistInfo.name}
-      {/* {artistInfo && (
-        <img src={artistInfo.artist.image[3]["#text"]} />
-      )} */}
-    </div>
-  )
-}
+    <>
+      {artistInfo.name && (
+        <div className={`${fadeIn ? "fade-in" : ""} content`}>
+          <div style={{ display: "flex", alignItems: "center" }}>
+            <div style={{ position: "relative", display: "inline-block" }}>
+              <img
+                src={
+                  artistImg != ""
+                    ? artistImg
+                    : "https://lastfm.freetls.fastly.net/i/u/300x300/2a96cbd8b46e442fc41c2b86b821562f.png"
+                }
+                style={{
+                  width: "200px",
+                  position: "relative",
+                  zIndex: 2,
+                  borderRadius: "1000px",
+                }}
+                alt="Album Cover"
+              />
+              <img
+                src={
+                  artistImg != ""
+                    ? artistImg
+                    : "https://lastfm.freetls.fastly.net/i/u/300x300/2a96cbd8b46e442fc41c2b86b821562f.png"
+                }
+                style={{
+                  width: "200px",
+                  filter: "blur(50px)",
+                  position: "absolute",
+                  top: 0,
+                  left: 0,
+                  zIndex: 1,
+                  opacity: 0.5,
+                }}
+                alt="Album Cover Blurred"
+              />
+            </div>
+            <h1 style={{ marginLeft: "20px" }}>
+              <Link
+                to={`https://www.youtube.com/results?search_query=${artist}`}
+                target="_blank"
+              >
+                {artistInfo.name}
+              </Link>
+            </h1>
+          </div>
 
-export default ArtistInfo
+          <h2 style={{ margin: "50 0 0" }}>Top tracks</h2>
+          {topTracks && (
+            <div>
+              {topTracks?.map((track, index) => (
+                <Track
+                  key={index}
+                  index={index}
+                  track={track}
+                  streams={Number(track.playcount).toLocaleString()}
+                  artistName={artist}
+                />
+              ))}
+            </div>
+          )}
+
+          <h2>Top albums</h2>
+          <div style={{ display: "flex" }}>
+            {Array.isArray(topAlbums) &&
+              topAlbums.map((album, index) => (
+                <Link
+                  to={`/albums/${artist}/${album.name.replace(/ /g, "+")}`}
+                  key={index}
+                  style={{
+                    textAlign: "center",
+                    flex: "1",
+                    maxWidth: "20%",
+                  }}
+                >
+                  <img
+                    style={{
+                      width: "100%",
+                      maxWidth: "180px",
+                      borderRadius: "10px",
+                    }}
+                    src={album.image[3]["#text"]}
+                    alt={album.name}
+                  />
+                  <div
+                    style={{
+                      marginTop: "10px",
+                      fontWeight: "bold",
+                      overflow: "hidden",
+                      textOverflow: "ellipsis",
+                    }}
+                  >
+                    {album.name}
+                  </div>
+                  <div style={{ fontSize: "14px", color: "gray" }}>
+                    {Number(album.playcount).toLocaleString()}
+                  </div>
+                </Link>
+              ))}
+          </div>
+
+          <div style={{ margin: "30px 0 20px" }}>
+            <div style={{ textAlign: "center" }}>
+              {Number(artistInfo.stats.listeners).toLocaleString()} listeners •{" "}
+              {Number(artistInfo.stats.playcount).toLocaleString()} streams
+            </div>
+
+            {artistInfo.tags && (
+              <div className="artist" style={{ textAlign: "center" }}>
+                {Array.isArray(artistInfo.tags.tag) ? (
+                  artistInfo.tags.tag.map((tag, index) => (
+                    <span key={index}>
+                      {tag.name}
+                      {index < artistInfo.tags.tag.length - 1 ? " • " : ""}
+                    </span>
+                  ))
+                ) : (
+                  <span>{artistInfo.tags.tag.name}</span>
+                )}
+              </div>
+            )}
+          </div>
+
+          <h3>Similar artists</h3>
+          {artistInfo.similar.artist.map((a, index) => {
+            <Link to={`/artist/${a.name}`} key={index}>
+              {a.name}
+            </Link>;
+          })}
+
+          {artistInfo.similar.artist && (
+            <div style={{ textAlign: "center", fontWeight: "600" }}>
+              {Array.isArray(artistInfo.similar.artist) ? (
+                artistInfo.similar.artist.map((a, index) => (
+                  <Link to={`/artist/${a.name.replace(/ /g, "+")}`} key={index}>
+                    {" "}
+                    🎤 {a.name}
+                  </Link>
+                ))
+              ) : (
+                <span>{artistInfo.tags.a.name}</span>
+              )}
+            </div>
+          )}
+
+          {artistInfo.bio && (
+            <>
+              <h3 onClick={() => setShowAbout(!showAbout)}>
+                <Link>
+                  {!showAbout ? "Show artist info" : "Hide artist info"}
+                </Link>
+              </h3>
+              {showAbout && (
+                <div className="artist" style={{ textAlign: "justify" }}>
+                  {artistInfo.bio.content.split("<a")[0]}
+                </div>
+              )}
+            </>
+          )}
+        </div>
+      )}
+    </>
+  );
+};
+
+export default ArtistInfo;

@@ -28,7 +28,6 @@ const Charts = () => {
   };
   const [activeChart, setActiveChart] = useState("tracks");
 
-  // Funkcija za prebacivanje između "Tracks" i "Artists"
   const handleSwitch = (type) => {
     setActiveChart(type);
   };

@@ -1,6 +1,7 @@
 import { useEffect, useState } from "react";
 import { useSelector } from "react-redux";
 import { Link, useParams } from "react-router-dom";
+import Track from "./Track";
 
 const Album = () => {
   const curUser = useSelector((state) => state.curUser);
@@ -162,35 +163,14 @@ const Album = () => {
 
           {albumInfo.tracks && (
             <div style={{ marginTop: "30px" }}>
-              {albumInfo.tracks?.track?.map((track, index) => {
-                const minutes = Math.floor(track.duration / 60);
-                const seconds = track.duration % 60;
-                const formattedDuration = `${minutes}:${
-                  seconds < 10 ? "0" : ""
-                }${seconds}`;
-
-                return (
-                  <div
-                    key={index}
-                    style={{
-                      display: "flex",
-                      justifyContent: "space-between",
-                      margin: "10px 0",
-                    }}
-                  >
-                    <span style={{ color: "white", fontSize: "20px" }}>
-                      <Link
-                        to={`https://www.youtube.com/results?search_query=${albumInfo.artist}+${track.name}`}
-                        target="_blank"
-                        className="yt-link"
-                      >
-                        {index + 1}. {track.name}
-                      </Link>
-                    </span>
-                    <span style={{ color: "grey" }}>{formattedDuration}</span>
-                  </div>
-                );
-              })}
+              {albumInfo.tracks?.track?.map((track, index) => (
+                <Track
+                  key={index}
+                  index={index}
+                  track={track}
+                  artistName={albumInfo.artist}
+                />
+              ))}
             </div>
           )}
 
