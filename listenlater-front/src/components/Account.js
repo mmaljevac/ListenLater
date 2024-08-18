@@ -95,7 +95,7 @@ const Account = () => {
   };
 
   return (
-    <div>
+    <div className="fly-up">
       <h2>Log out</h2>
       <button onClick={handleLogout}>Log out</button>
       <h2>Change password</h2>

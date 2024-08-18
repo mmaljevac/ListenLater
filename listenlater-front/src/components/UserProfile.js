@@ -55,7 +55,7 @@ const UserProfile = () => {
     }
   };
   return curUser ? (
-    <div className="content">
+    <div className="content fly-up">
       <div className="user-box fly-down">
         <div className="user-bubble" style={{ margin: "0 10px 0 0" }}>
           {userName.charAt(0)}

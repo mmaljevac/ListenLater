@@ -86,7 +86,7 @@ const Admin = () => {
   return (
     <>
       {users && users.length > 0 && (
-        <>
+        <div className="fly-up">
           <h2>Users</h2>
           <table>
             <thead>
@@ -116,7 +116,7 @@ const Admin = () => {
               ))}
             </tbody>
           </table>
-        </>
+        </div>
       )}
     </>
   );

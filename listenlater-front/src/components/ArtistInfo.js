@@ -101,39 +101,70 @@ const ArtistInfo = () => {
     <>
       {artistInfo.name && (
         <div className={`${fadeIn ? "fade-in" : ""} content`}>
-          <div style={{ display: "flex", alignItems: "center" }}>
-            <div style={{ position: "relative", display: "inline-block" }}>
-              <img
-                src={
-                  artistImg != ""
-                    ? artistImg
-                    : "https://lastfm.freetls.fastly.net/i/u/300x300/2a96cbd8b46e442fc41c2b86b821562f.png"
-                }
+          <div style={{ display: "flex", alignItems: "center", margin: '30px 0' }}>
+            <div
+              style={{
+                position: "relative",
+                display: "inline-block",
+                width: "200px",
+                height: "200px",
+              }}
+            >
+              <div
                 style={{
-                  width: "200px",
-                  position: "relative",
-                  zIndex: 2,
-                  borderRadius: "1000px",
-                }}
-                alt="Album Cover"
-              />
-              <img
-                src={
-                  artistImg != ""
-                    ? artistImg
-                    : "https://lastfm.freetls.fastly.net/i/u/300x300/2a96cbd8b46e442fc41c2b86b821562f.png"
-                }
-                style={{
-                  width: "200px",
-                  filter: "blur(50px)",
                   position: "absolute",
                   top: 0,
                   left: 0,
+                  width: "100%",
+                  height: "100%",
+                  borderRadius: "1000px",
+                  overflow: "hidden",
+                  filter: "blur(50px)",
+                  opacity: '0.7',
                   zIndex: 1,
-                  opacity: 0.5,
                 }}
-                alt="Album Cover Blurred"
-              />
+              >
+                <img
+                  src={
+                    artistImg !== ""
+                      ? artistImg
+                      : "https://lastfm.freetls.fastly.net/i/u/300x300/2a96cbd8b46e442fc41c2b86b821562f.png"
+                  }
+                  style={{
+                    width: "100%",
+                    height: "100%",
+                    objectFit: "cover",
+                    borderRadius: "1000px",
+                  }}
+                  alt="Album Cover"
+                />
+              </div>
+              <div
+                style={{
+                  position: "relative",
+                  width: "100%",
+                  height: "100%",
+                  borderRadius: "1000px",
+                  overflow: "hidden",
+                  zIndex: 2,
+                }}
+              >
+                <img
+                  src={
+                    artistImg !== ""
+                      ? artistImg
+                      : "https://lastfm.freetls.fastly.net/i/u/300x300/2a96cbd8b46e442fc41c2b86b821562f.png"
+                  }
+                  style={{
+                    width: "100%",
+                    height: "100%",
+                    objectFit: "cover",
+                    position: "absolute",
+                    borderRadius: "1000px",
+                  }}
+                  alt="Album Cover"
+                />
+              </div>
             </div>
             <h1 style={{ marginLeft: "20px" }}>
               <Link
@@ -145,32 +176,38 @@ const ArtistInfo = () => {
             </h1>
           </div>
 
-          <h2 style={{ margin: "50 0 0" }}>Top tracks</h2>
+          <h2 style={{ margin: "50 0 0" }} className="fly-up">
+            Top tracks
+          </h2>
           {topTracks && (
             <div>
               {topTracks?.map((track, index) => (
-                <Track
-                  key={index}
-                  index={index}
-                  track={track}
-                  streams={Number(track.playcount).toLocaleString()}
-                  artistName={artist}
-                />
+                <div className="fly-up">
+                  <Track
+                    key={index}
+                    index={index}
+                    track={track}
+                    streams={Number(track.playcount).toLocaleString()}
+                    artistName={artist}
+                  />
+                </div>
               ))}
             </div>
           )}
 
-          <h2>Top albums</h2>
+          <h2 className="fly-up" style={{ margin: '40px 0' }}>Top albums</h2>
           <div style={{ display: "flex" }}>
             {Array.isArray(topAlbums) &&
               topAlbums.map((album, index) => (
                 <Link
+                  className="fly-up"
                   to={`/albums/${artist}/${album.name.replace(/ /g, "+")}`}
                   key={index}
                   style={{
                     textAlign: "center",
                     flex: "1",
                     maxWidth: "20%",
+                    margin: "0 5px",
                   }}
                 >
                   <img
@@ -186,8 +223,6 @@ const ArtistInfo = () => {
                     style={{
                       marginTop: "10px",
                       fontWeight: "bold",
-                      overflow: "hidden",
-                      textOverflow: "ellipsis",
                     }}
                   >
                     {album.name}
@@ -199,14 +234,14 @@ const ArtistInfo = () => {
               ))}
           </div>
 
-          <div style={{ margin: "30px 0 20px" }}>
+          <div style={{ margin: "30px 0 20px" }} className="fly-up">
             <div style={{ textAlign: "center" }}>
               {Number(artistInfo.stats.listeners).toLocaleString()} listeners •{" "}
               {Number(artistInfo.stats.playcount).toLocaleString()} streams
             </div>
 
             {artistInfo.tags && (
-              <div className="artist" style={{ textAlign: "center" }}>
+              <div className="artist fly-up" style={{ textAlign: "center" }}>
                 {Array.isArray(artistInfo.tags.tag) ? (
                   artistInfo.tags.tag.map((tag, index) => (
                     <span key={index}>
@@ -221,7 +256,7 @@ const ArtistInfo = () => {
             )}
           </div>
 
-          <h3>Similar artists</h3>
+          <h3 className="fly-up">Similar artists</h3>
           {artistInfo.similar.artist.map((a, index) => {
             <Link to={`/artist/${a.name}`} key={index}>
               {a.name}
@@ -229,7 +264,7 @@ const ArtistInfo = () => {
           })}
 
           {artistInfo.similar.artist && (
-            <div style={{ textAlign: "center", fontWeight: "600" }}>
+            <div style={{ textAlign: "center", fontWeight: "600", margin: '0 0 30px' }}>
               {Array.isArray(artistInfo.similar.artist) ? (
                 artistInfo.similar.artist.map((a, index) => (
                   <Link to={`/artist/${a.name.replace(/ /g, "+")}`} key={index}>
@@ -244,7 +279,7 @@ const ArtistInfo = () => {
           )}
 
           {artistInfo.bio && (
-            <>
+            <div className="fly-up">
               <h3 onClick={() => setShowAbout(!showAbout)}>
                 <Link>
                   {!showAbout ? "Show artist info" : "Hide artist info"}
@@ -255,7 +290,7 @@ const ArtistInfo = () => {
                   {artistInfo.bio.content.split("<a")[0]}
                 </div>
               )}
-            </>
+            </div>
           )}
         </div>
       )}

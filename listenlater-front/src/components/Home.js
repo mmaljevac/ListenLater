@@ -5,7 +5,7 @@ const Home = () => {
   const curUser = useSelector((state) => state.curUser);
 
   return curUser ? (
-    <div className="content">
+    <div className="content fly-up">
       <h1>Hello, {curUser.username} 👋</h1>
       <Link to={`/user/${curUser.username}/LISTEN_LATER`} className="link-box">
         <h2>🔖 My Saved Albums</h2>

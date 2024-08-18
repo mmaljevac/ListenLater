@@ -79,7 +79,7 @@ const Register = () => {
         <div>
           <label htmlFor="confirmPassword">Confirm password:</label>
           <input
-            type="confirmPassword"
+            type="password"
             id="confirmPassword"
             name="confirmPassword"
             value={formData.confirmPassword}

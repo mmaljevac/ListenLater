@@ -162,7 +162,7 @@ const Album = () => {
           </div>
 
           {albumInfo.tracks && (
-            <div style={{ marginTop: "30px" }}>
+            <div style={{ marginTop: "30px" }} className="fly-up">
               {albumInfo.tracks?.track?.map((track, index) => (
                 <Track
                   key={index}
@@ -174,7 +174,7 @@ const Album = () => {
             </div>
           )}
 
-          <div style={{ margin: "30px 0 20px" }}>
+          <div style={{ margin: "30px 0 20px" }} className="fly-up">
             <div style={{ textAlign: "center" }}>
               {Number(albumInfo.listeners).toLocaleString()} listeners •{" "}
               {Number(albumInfo.playcount).toLocaleString()} streams
@@ -196,7 +196,7 @@ const Album = () => {
             )}
           </div>
 
-          <div style={{ textAlign: "center", margin: "20px 0" }}>
+          <div style={{ textAlign: "center", margin: "20px 0" }} className="fly-up">
             <button
               onClick={() => handleAlbumSave(albumInfo, "LISTEN_LATER")}
               disabled={albumSaved === "LISTEN_LATER"}
@@ -223,7 +223,7 @@ const Album = () => {
           </div>
 
           {albumInfo.wiki && (
-            <>
+            <div className="fly-up">
               <h3 onClick={() => setShowAbout(!showAbout)}>
                 <Link>
                   {!showAbout ? "Show album info" : "Hide album info"}
@@ -234,7 +234,7 @@ const Album = () => {
                   {albumInfo.wiki.content.split("<a")[0]}
                 </div>
               )}
-            </>
+            </div>
           )}
         </>
       )}

@@ -11,6 +11,7 @@ const Track = ({ index, track, streams, artistName }) => {
       style={{
         display: "flex",
         justifyContent: "space-between",
+        alignItems: "center",
         margin: "10px 0",
       }}
     >
@@ -27,6 +28,5 @@ const Track = ({ index, track, streams, artistName }) => {
     </div>
   );
 };
-
 
 export default Track;

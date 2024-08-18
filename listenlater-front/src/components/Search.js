@@ -87,7 +87,7 @@ const Search = () => {
   }, [searchTrigger]);
 
   return curUser ? (
-    <div className="content">
+    <div className="content fly-up">
       <input
         type="text"
         value={searchTerm}
