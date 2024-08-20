@@ -13,6 +13,7 @@ import java.time.Instant;
 @IdClass(SavedAlbumId.class)
 @AllArgsConstructor
 @NoArgsConstructor
+@Table(name = "SAVED_ALBUMS")
 public class SavedAlbum {
 
     @Id
@@ -32,7 +33,7 @@ public class SavedAlbum {
     private Long albumId;
 
     @Enumerated(EnumType.STRING)
-    @Column(name= "ACTION", nullable = false)
+    @Column(name = "ACTION", nullable = false)
     private Action action;
 
     @Column(name = "DATE_ADDED", nullable = false, updatable = false, insertable = false, columnDefinition = "TIMESTAMP DEFAULT CURRENT_TIMESTAMP")
@@ -42,18 +43,6 @@ public class SavedAlbum {
         this.user = user;
         this.album = album;
         this.action = action;
-    }
-
-    @PostLoad
-    @PostPersist
-    @PostUpdate
-    public void updateTransientFields() {
-        if (user != null) {
-            this.userId = user.getId();
-        }
-        if (album != null) {
-            this.albumId = album.getId();
-        }
     }
 
 }
