@@ -189,7 +189,7 @@ public class UserService {
         return ResponseEntity.status(HttpStatus.OK).body(response);
     }
 
-    private UserDTO mapUserToDTO(AppUser user) {
+    public UserDTO mapUserToDTO(AppUser user) {
         return UserDTO.builder()
                 .id(user.getId())
                 .username(user.getUsername())

@@ -83,6 +83,7 @@ public class AlbumRepository {
 
     public boolean deleteEntity(Long id) {
         jdbc.update("DELETE FROM SAVED_ALBUMS WHERE ALBUM_ID = " + id);
+        jdbc.update("DELETE FROM INVITES WHERE ALBUM_ID = " + id);
         int rowsAffected = jdbc.update("DELETE FROM ALBUMS WHERE ID = " + id);
         return rowsAffected > 0;
     }

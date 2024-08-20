@@ -109,10 +109,11 @@ public class SavedAlbumService {
                 .filter(sa -> sa.getAlbum().getFullName().equalsIgnoreCase(finalFullName))
                 .findFirst();
         String value;
-        if (optionalSavedAlbum.isEmpty()) {
+        if (optionalSavedAlbum.isPresent()) {
+            value = optionalSavedAlbum.get().getAction().getValue();
+        } else {
             value = "";
         }
-        value = optionalSavedAlbum.get().getAction().getValue();
 
         response = CustomResponse.builder().success(true).message("Success getting data.").data(value).build();
         return ResponseEntity.status(HttpStatus.OK).body(response);

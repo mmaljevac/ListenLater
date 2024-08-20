@@ -109,6 +109,8 @@ public class UserRepository {
     public boolean deleteEntity(Long id) {
         // TODO dodati provjeru je li album spremljen od bar jednog usera, izbrisati ga ako nije
         jdbc.update("DELETE FROM SAVED_ALBUMS WHERE USER_ID = " + id);
+        jdbc.update("DELETE FROM FRIENDS WHERE USER1_ID = " + id + " OR USER2_ID = " + id);
+        jdbc.update("DELETE FROM INVITES WHERE SENDER_ID = " + id + " OR RECEIVER_ID = " + id);
         int rowsAffected = jdbc.update("DELETE FROM USERS WHERE ID = " + id);
         return rowsAffected > 0;
     }
@@ -118,7 +120,7 @@ public class UserRepository {
         return rowsAffected > 0;
     }
 
-    private AppUser mapRowToUser(ResultSet rs, int rowNum) throws SQLException {
+    public AppUser mapRowToUser(ResultSet rs, int rowNum) throws SQLException {
         AppUser user = new AppUser();
 
         user.setId(rs.getLong("ID"));
