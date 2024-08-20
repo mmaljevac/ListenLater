@@ -44,7 +44,8 @@ public class SavedAlbumRepository {
         String sql = " SELECT * FROM ALBUMS a " +
                 " JOIN SAVED_ALBUMS sa ON a.ID = sa.ALBUM_ID " +
                 " JOIN USERS u ON sa.USER_ID = u.ID " +
-                " WHERE u.ID = :userId ";
+                " WHERE u.ID = :userId " +
+                " ORDER BY a.ARTIST ASC, a.NAME ASC ";
         MapSqlParameterSource parameters = new MapSqlParameterSource();
         parameters.addValue("userId", userId);
 
@@ -56,7 +57,8 @@ public class SavedAlbumRepository {
                 " JOIN SAVED_ALBUMS sa ON a.ID = sa.ALBUM_ID " +
                 " JOIN USERS u ON sa.USER_ID = u.ID " +
                 " WHERE u.ID = :userId " +
-                " AND sa.ACTION = :action ";
+                " AND sa.ACTION = :action " +
+                " ORDER BY a.ARTIST ASC, a.NAME ASC ";
         MapSqlParameterSource parameters = new MapSqlParameterSource();
         parameters.addValue("userId", userId);
         parameters.addValue("action", action);

@@ -5,6 +5,7 @@ import hr.tvz.listenlater.model.AppUser;
 import hr.tvz.listenlater.model.Invite;
 import hr.tvz.listenlater.model.enums.InviteType;
 import lombok.AllArgsConstructor;
+import org.springframework.jdbc.core.namedparam.MapSqlParameterSource;
 import org.springframework.jdbc.core.namedparam.NamedParameterJdbcTemplate;
 import org.springframework.stereotype.Repository;
 
@@ -22,7 +23,63 @@ public class InviteRepository {
     private final UserRepository userRepository;
     private final AlbumRepository albumRepository;
 
+    public List<Invite> getInvitesByReceiverId(Long userId) {
+        String sql = " SELECT * FROM INVITES " +
+                " WHERE RECEIVER_ID = :userId ";
+        MapSqlParameterSource parameters = new MapSqlParameterSource();
+        parameters.addValue("userId", userId);
+        return jdbcParams.query(sql, parameters, this::mapRowToInvite);
+    }
 
+    public boolean isFriendRequestPending(Long curUserId, Long friendId) {
+        String sql = " SELECT COUNT(*) FROM INVITES " +
+                " WHERE INVITE_TYPE = 'FRIEND_REQUEST' " +
+                " AND SENDER_ID = :curUserId " +
+                " AND RECEIVER_ID = :friendId ";
+        MapSqlParameterSource parameters = new MapSqlParameterSource();
+        parameters.addValue("curUserId", curUserId);
+        parameters.addValue("friendId", friendId);
+
+        int countNumber = jdbcParams.queryForObject(sql, parameters, Integer.class);
+        return countNumber == 1;
+    }
+
+    public boolean sendFriendRequest(String curUserName, Long curUserId, Long friendId) {
+        String sql = " INSERT INTO INVITES (SENDER_ID, RECEIVER_ID, INVITE_TYPE, MESSAGE) " +
+                " VALUES (:senderId, :receiverId, :inviteType, :message) ";
+        MapSqlParameterSource parameters = new MapSqlParameterSource();
+        parameters.addValue("senderId", curUserId);
+        parameters.addValue("receiverId", friendId);
+        parameters.addValue("inviteType", "FRIEND_REQUEST");
+        parameters.addValue("message", curUserName + " would like to add you as a friend!");
+
+        int rowsUpdated = jdbcParams.update(sql, parameters);
+        return rowsUpdated == 1;
+    }
+
+    public boolean recommendAlbum(Long curUserId, Long friendId, Long albumId, String message) {
+        String sql = " INSERT INTO INVITES (SENDER_ID, RECEIVER_ID, INVITE_TYPE, ALBUM_ID, MESSAGE) " +
+                " VALUES (:senderId, :receiverId, :inviteType, :albumId, :message) ";
+        MapSqlParameterSource parameters = new MapSqlParameterSource();
+        parameters.addValue("senderId", curUserId);
+        parameters.addValue("receiverId", friendId);
+        parameters.addValue("inviteType", "ALBUM_RECOMMENDATION");
+        parameters.addValue("albumId", albumId);
+        parameters.addValue("message", message);
+
+        int rowsUpdated = jdbcParams.update(sql, parameters);
+        return rowsUpdated == 1;
+    }
+
+    public boolean deleteInvite(Long inviteId) {
+        String sql = " DELETE FROM INVITES " +
+                " WHERE ID = :inviteId ";
+        MapSqlParameterSource parameters = new MapSqlParameterSource();
+        parameters.addValue("inviteId", inviteId);
+
+        int rowsUpdated = jdbcParams.update(sql, parameters);
+        return rowsUpdated > 0;
+    }
 
     private Invite mapRowToInvite(ResultSet rs, int rowNum) throws SQLException {
         Invite invite = new Invite();

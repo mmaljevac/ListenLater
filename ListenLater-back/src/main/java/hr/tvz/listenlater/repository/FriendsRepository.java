@@ -24,10 +24,23 @@ public class FriendsRepository {
         String sql = " SELECT * FROM USERS u " +
                 " JOIN FRIENDS f ON (u.ID = f.USER1_ID OR u.ID = f.USER2_ID) " +
                 " WHERE (f.USER1_ID = :userId OR f.USER2_ID = :userId) " +
-                " AND u.ID != :userId; ";
+                " AND u.ID != :userId " +
+                " ORDER BY u.USERNAME ";
         MapSqlParameterSource parameters = new MapSqlParameterSource();
         parameters.addValue("userId", userId);
         return jdbcParams.query(sql, parameters, userRepository::mapRowToUser);
+    }
+
+    public boolean isFriends(Long curUserId, Long friendId) {
+        String sql = " SELECT COUNT(*) FROM FRIENDS " +
+                " WHERE (USER1_ID = :curUserId AND USER2_ID = :friendId) " +
+                " OR (USER1_ID = :friendId AND USER2_ID = :curUserId) ";
+        MapSqlParameterSource parameters = new MapSqlParameterSource();
+        parameters.addValue("curUserId", curUserId);
+        parameters.addValue("friendId", friendId);
+
+        int countNumber = jdbcParams.queryForObject(sql, parameters, Integer.class);
+        return countNumber == 1;
     }
 
     public boolean addFriend(Long curUserId, Long friendId) {

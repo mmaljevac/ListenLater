@@ -104,7 +104,7 @@ public class SavedAlbumService {
 
         List<SavedAlbum> savedAlbumsByUser = savedAlbumRepository.getSavedAlbumsByUserId(userId);
 
-        String finalFullName = fullName.replace(" ", "+");
+        String finalFullName = fullName.replace("+", "%2B").replace(" ", "+");
         Optional<SavedAlbum> optionalSavedAlbum = savedAlbumsByUser.stream()
                 .filter(sa -> sa.getAlbum().getFullName().equalsIgnoreCase(finalFullName))
                 .findFirst();

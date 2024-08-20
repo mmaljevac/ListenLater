@@ -19,7 +19,10 @@ public class FriendsController {
         return friendsService.getFriendsByUsername(username);
     }
 
-    // check if user is friend/is pending request by usernames
+    @GetMapping("/friend-status")
+    public ResponseEntity<CustomResponse<Object>> getFriendStatus(@RequestParam String curUserName, @RequestParam String friendUserName) {
+        return friendsService.getFriendStatus(curUserName, friendUserName);
+    }
 
     @PostMapping("/add")
     public ResponseEntity<CustomResponse<Object>> addFriend(@RequestParam String curUserName, @RequestParam String friendUserName) {
