@@ -97,7 +97,7 @@ public class InviteService {
         String finalAlbumFullName = albumFullName.replace("+", "%2B").replace(" ", "+");
         Optional<Album> optionalSavedAlbum = albumRepository.findByFullName(finalAlbumFullName);
         if (optionalSavedAlbum.isEmpty()) {
-            response = CustomResponse.builder().success(false).data("Album not found by fullName").build();
+            response = CustomResponse.builder().success(false).message("Album not found by fullName").build();
             return ResponseEntity.status(HttpStatus.OK).body(response);
         }
         Album album = optionalSavedAlbum.get();

@@ -269,15 +269,31 @@ const Album = () => {
             </button>
           </div>
 
-          {albumSaved !== "" && (
+          {albumSaved !== "" && friends && friends.length > 0 && (
             <>
               <button
                 onClick={() => setIsRecommendClicked(!isRecommendClicked)}
+                className="fly-up"
               >
                 Recommend to a friend
               </button>
-              {isRecommendClicked &&
-                friends.map((friend, index) => <Link onClick={() => recommendAlbum(friend.username)} key={index}>{friend.username}</Link>)}
+              <div className="friends-container" style={{ margin: "20px 0" }}>
+                {isRecommendClicked &&
+                  friends.map((friend, index) => (
+                    <Link
+                      onClick={() => recommendAlbum(friend.username)}
+                      key={index}
+                      className="friend-item fly-up"
+                    >
+                      <div className="user-bubble" style={{ width: '80px', height: '80px', fontSize: '40px' }}>
+                        {friend.username.charAt(0)}
+                      </div>
+                      <div style={{ margin: "10px 0", fontWeight: "bold" }}>
+                        {friend.username}
+                      </div>
+                    </Link>
+                  ))}
+              </div>
             </>
           )}
 

@@ -25,8 +25,6 @@ const ArtistInfo = () => {
       );
       const data = await response.json();
       setArtistInfo(data.artist);
-      console.log("artist");
-      console.log(data.artist);
       mbid = data.artist.mbid;
     } catch (error) {
       console.error("Error fetching data:", error);
@@ -39,8 +37,6 @@ const ArtistInfo = () => {
       );
       const data = await response.json();
       setTopTracks(data.toptracks.track);
-      console.log("TRACKS");
-      console.log(data.toptracks.track);
     } catch (error) {
       console.error("Error fetching data:", error);
     }
@@ -52,8 +48,6 @@ const ArtistInfo = () => {
       );
       const data = await response.json();
       setTopAlbums(data.topalbums.album);
-      console.log("ALBUMS");
-      console.log(data.topalbums.album);
     } catch (error) {
       console.error("Error fetching data:", error);
     }
@@ -65,8 +59,6 @@ const ArtistInfo = () => {
         `https://musicbrainz.org/ws/2/artist/${mbid}?inc=url-rels&fmt=json`
       );
       const data = await response.json();
-      console.log("mbid");
-      console.log(data);
 
       if (!data.relations) return;
 

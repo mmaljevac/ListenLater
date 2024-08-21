@@ -364,7 +364,47 @@ tbody tr:hover {
   background-color: rgb(75, 68, 38);
   box-shadow: 0 0 20px rgb(75, 68, 38);
 }
+.notification:hover {
+  background-color: rgb(87, 80, 45);
+}
+.notification:active {
+  background-color: rgb(75, 68, 38);
+}
 
 .gray {
   background-color: #2b2b2b;
+}
+
+.notification-card {
+  background-color: rgb(75, 68, 38);
+  box-shadow: 0 0 20px rgb(75, 68, 38);
+  padding: 15px;
+  margin-bottom: 20px;
+  border-radius: 8px;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+}
+
+.notification-text {
+  margin: 10px 0;
+}
+
+.notification-buttons {
+  display: flex;
+  justify-content: space-around;
+  width: 100%;
+}
+
+.friends-container {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 30px;
+}
+
+.friend-item {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex-direction: column;
 }/*# sourceMappingURL=index.css.map */

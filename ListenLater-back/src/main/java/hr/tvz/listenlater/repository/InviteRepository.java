@@ -25,7 +25,8 @@ public class InviteRepository {
 
     public List<Invite> getInvitesByReceiverId(Long userId) {
         String sql = " SELECT * FROM INVITES " +
-                " WHERE RECEIVER_ID = :userId ";
+                " WHERE RECEIVER_ID = :userId " +
+                " ORDER BY TIMESTAMP_CREATED ASC ";
         MapSqlParameterSource parameters = new MapSqlParameterSource();
         parameters.addValue("userId", userId);
         return jdbcParams.query(sql, parameters, this::mapRowToInvite);

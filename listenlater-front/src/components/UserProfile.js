@@ -24,6 +24,7 @@ const UserProfile = () => {
         setFriendStatus(payload.data);
         if (payload.data === "pending") setFriendButtonText("Pending");
         else if (payload.data === "friend") setFriendButtonText("Unfriend");
+        else if (payload.data === "") setFriendButtonText("Add friend");
       } else if (response.status === 404) {
         console.log(response);
       }
@@ -44,7 +45,7 @@ const UserProfile = () => {
         const payload = await response.json();
         if (response.ok) {
           if (payload.success === true) {
-            console.log(payload.success)
+            console.log(payload.success);
           }
         } else if (response.status === 404) {
           console.log(response);
@@ -52,8 +53,7 @@ const UserProfile = () => {
       } catch (error) {
         throw new Error(`Fetch error: ${error}`);
       }
-    }
-    else if (friendStatus === 'friend') {
+    } else if (friendStatus === "friend") {
       try {
         const response = await fetch(
           `http://localhost:8080/friends/remove?curUserName=${curUser.username}&friendUserName=${userName}`,
@@ -64,7 +64,7 @@ const UserProfile = () => {
         const payload = await response.json();
         if (response.ok) {
           if (payload.success === true) {
-            console.log(payload.success)
+            console.log(payload.success);
           }
         } else if (response.status === 404) {
           console.log(response);
@@ -75,7 +75,7 @@ const UserProfile = () => {
     }
 
     fetchFriendStatus();
-  }
+  };
 
   const fetchAlbums = async () => {
     try {
@@ -132,7 +132,7 @@ const UserProfile = () => {
         <button
           onClick={() => handleFriendButton()}
           disabled={friendStatus === "pending"}
-          className={friendStatus === 'friend' && 'gray'}
+          className={friendStatus === "friend" && "gray"}
         >
           {friendButtonText}
         </button>

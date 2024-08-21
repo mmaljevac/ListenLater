@@ -26,7 +26,7 @@ public class AlbumRepository {
 
     public Optional<Album> findByFullName(String fullName) {
         String query = " SELECT * FROM ALBUMS " +
-                " WHERE FULL_NAME = :fullName ";
+                " WHERE UPPER(FULL_NAME) = UPPER(:fullName) ";
         MapSqlParameterSource parameters = new MapSqlParameterSource();
         parameters.addValue("fullName", fullName);
 
