@@ -45,6 +45,23 @@ public class InviteService {
         return ResponseEntity.status(HttpStatus.OK).body(response);
     }
 
+    public ResponseEntity<CustomResponse<Object>> getInviteCountByReceiver(String username) {
+        CustomResponse<Object> response;
+
+        Optional<AppUser> optionalUser = userRepository.findUserByUsername(username);
+        if (optionalUser.isEmpty()) {
+            response = CustomResponse.builder().success(false).message("User not found.").build();
+            return ResponseEntity.status(HttpStatus.NOT_FOUND).body(response);
+        }
+
+        AppUser user = optionalUser.get();
+
+        Integer inviteCountByUser = inviteRepository.getInviteCountByReceiverId(user.getId());
+
+        response = CustomResponse.builder().success(true).message("Success getting data.").data(inviteCountByUser).build();
+        return ResponseEntity.status(HttpStatus.OK).body(response);
+    }
+
     public ResponseEntity<CustomResponse<Object>> sendFriendRequest(String curUserName, String friendUserName) {
         CustomResponse<Object> response;
 

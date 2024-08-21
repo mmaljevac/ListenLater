@@ -26,8 +26,14 @@ const Register = () => {
     const password = formData.password;
     const confirmPassword = formData.confirmPassword;
 
+    const usernameRegex = /^[a-zA-Z0-9]+$/;
+    if (!usernameRegex.test(username)) {
+      setError("Username should contain letters and numbers only.");
+      return;
+    }
+
     if (password !== confirmPassword) {
-      setError("Passwords do not match!");
+      setError("Passwords do not match.");
       return;
     }
 

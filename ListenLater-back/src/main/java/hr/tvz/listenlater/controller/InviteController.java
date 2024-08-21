@@ -19,6 +19,11 @@ public class InviteController {
         return inviteService.getInvitesByReceiver(username);
     }
 
+    @GetMapping("/count/{username}")
+    public ResponseEntity<CustomResponse<Object>> inviteCountByUser(@PathVariable String username) {
+        return inviteService.getInviteCountByReceiver(username);
+    }
+
     @PostMapping("/friend-request")
     public ResponseEntity<CustomResponse<Object>> sendFriendRequest(@RequestParam String curUserName, @RequestParam String friendUserName) {
         return inviteService.sendFriendRequest(curUserName, friendUserName);

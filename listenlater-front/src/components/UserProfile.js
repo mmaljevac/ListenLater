@@ -7,31 +7,96 @@ const UserProfile = () => {
   const navigate = useNavigate();
 
   const [savedAlbums, setSavedAlbums] = useState([]);
+  const [friendStatus, setFriendStatus] = useState("");
+  const [friendButtonText, setFriendButtonText] = useState("Add friend");
   const { userName, actionParam } = useParams();
 
-  const fetchAlbums = async () => {
-    if (curUser) {
+  const fetchFriendStatus = async () => {
+    try {
+      const response = await fetch(
+        `http://localhost:8080/friends/friend-status?curUserName=${curUser.username}&friendUserName=${userName}`,
+        {
+          method: "GET",
+        }
+      );
+      const payload = await response.json();
+      if (response.ok) {
+        setFriendStatus(payload.data);
+        if (payload.data === "pending") setFriendButtonText("Pending");
+        else if (payload.data === "friend") setFriendButtonText("Unfriend");
+      } else if (response.status === 404) {
+        console.log(response);
+      }
+    } catch (error) {
+      throw new Error(`Fetch error: ${error}`);
+    }
+  };
+
+  const handleFriendButton = async () => {
+    if (friendStatus === "") {
       try {
         const response = await fetch(
-          `http://localhost:8080/saved-albums/username/${userName}`,
+          `http://localhost:8080/invites/friend-request?curUserName=${curUser.username}&friendUserName=${userName}`,
           {
-            method: "GET",
+            method: "POST",
           }
         );
         const payload = await response.json();
         if (response.ok) {
-          setSavedAlbums(payload.data);
+          if (payload.success === true) {
+            console.log(payload.success)
+          }
         } else if (response.status === 404) {
+          console.log(response);
         }
       } catch (error) {
         throw new Error(`Fetch error: ${error}`);
       }
-    } else {
-      return <Navigate to={{ pathname: "/login" }} />;
+    }
+    else if (friendStatus === 'friend') {
+      try {
+        const response = await fetch(
+          `http://localhost:8080/friends/remove?curUserName=${curUser.username}&friendUserName=${userName}`,
+          {
+            method: "DELETE",
+          }
+        );
+        const payload = await response.json();
+        if (response.ok) {
+          if (payload.success === true) {
+            console.log(payload.success)
+          }
+        } else if (response.status === 404) {
+          console.log(response);
+        }
+      } catch (error) {
+        throw new Error(`Fetch error: ${error}`);
+      }
+    }
+
+    fetchFriendStatus();
+  }
+
+  const fetchAlbums = async () => {
+    try {
+      const response = await fetch(
+        `http://localhost:8080/saved-albums/username/${userName}`,
+        {
+          method: "GET",
+        }
+      );
+      const payload = await response.json();
+      if (response.ok) {
+        setSavedAlbums(payload.data);
+      } else if (response.status === 404) {
+      }
+    } catch (error) {
+      throw new Error(`Fetch error: ${error}`);
     }
   };
 
   useEffect(() => {
+    fetchFriendStatus();
     fetchAlbums();
   }, []);
 
@@ -54,6 +119,7 @@ const UserProfile = () => {
       throw new Error(`Fetch error: ${error}`);
     }
   };
+
   return curUser ? (
     <div className="content fly-up">
       <div className="user-box fly-down">
@@ -62,7 +128,16 @@ const UserProfile = () => {
         </div>
         <div>{userName}</div>
       </div>
-      <h1 style={{ marginTop: '0' }}>
+      {userName !== curUser.username && (
+        <button
+          onClick={() => handleFriendButton()}
+          disabled={friendStatus === "pending"}
+          className={friendStatus === 'friend' && 'gray'}
+        >
+          {friendButtonText}
+        </button>
+      )}
+      <h1>
         {userName === curUser.username ? "My" : `${userName}'s`} Saved Albums
       </h1>
       <div style={{ textAlign: "center", margin: "0px 0" }}>

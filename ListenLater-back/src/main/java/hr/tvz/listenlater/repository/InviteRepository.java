@@ -31,11 +31,23 @@ public class InviteRepository {
         return jdbcParams.query(sql, parameters, this::mapRowToInvite);
     }
 
+    public Integer getInviteCountByReceiverId(Long userId) {
+        String sql = " SELECT COUNT(*) FROM INVITES " +
+                " WHERE RECEIVER_ID = :userId ";
+        MapSqlParameterSource parameters = new MapSqlParameterSource();
+        parameters.addValue("userId", userId);
+        Integer count = jdbcParams.queryForObject(sql, parameters, Integer.class);
+        if (count == null) {
+            return 0;
+        }
+        return count;
+    }
+
     public boolean isFriendRequestPending(Long curUserId, Long friendId) {
         String sql = " SELECT COUNT(*) FROM INVITES " +
                 " WHERE INVITE_TYPE = 'FRIEND_REQUEST' " +
-                " AND SENDER_ID = :curUserId " +
-                " AND RECEIVER_ID = :friendId ";
+                " AND (SENDER_ID = :curUserId AND RECEIVER_ID = :friendId) " +
+                " OR (SENDER_ID = :friendId AND RECEIVER_ID = :curUserId) ";
         MapSqlParameterSource parameters = new MapSqlParameterSource();
         parameters.addValue("curUserId", curUserId);
         parameters.addValue("friendId", friendId);

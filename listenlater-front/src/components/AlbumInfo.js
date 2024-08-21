@@ -12,6 +12,8 @@ const Album = () => {
   const [albumSaved, setAlbumSaved] = useState("");
   const [fadeIn, setFadeIn] = useState(false);
   const [showAbout, setShowAbout] = useState(false);
+  const [isRecommendClicked, setIsRecommendClicked] = useState(false);
+  const [friends, setFriends] = useState([]);
 
   const fetchAlbumInfo = async () => {
     try {
@@ -82,6 +84,46 @@ const Album = () => {
     }
   };
 
+  const fetchFriends = async () => {
+    try {
+      const response = await fetch(
+        `http://localhost:8080/friends/${curUser.username}`,
+        {
+          method: "GET",
+        }
+      );
+      const payload = await response.json();
+      if (response.ok) {
+        setFriends(payload.data);
+        console.log("friends");
+        console.log(payload);
+      } else if (response.status === 404) {
+        console.log(response);
+      }
+    } catch (error) {
+      throw new Error(`Fetch error: ${error}`);
+    }
+  };
+
+  const recommendAlbum = async (friendUserName) => {
+    try {
+      const response = await fetch(
+        `http://localhost:8080/invites/recommend-album?curUserName=${curUser.username}&friendUserName=${friendUserName}&albumFullName=${artist}/${albumName}&message=Check this album out!`,
+        {
+          method: "POST",
+        }
+      );
+      const payload = await response.json();
+      if (response.ok) {
+        if (payload.success) alert(`Album recommended to ${friendUserName}!`);
+      } else if (response.status === 404) {
+        console.log(response);
+      }
+    } catch (error) {
+      throw new Error(`Fetch error: ${error}`);
+    }
+  };
+
   useEffect(() => {
     fetchAlbumInfo();
     isAlbumSaved();
@@ -94,6 +136,8 @@ const Album = () => {
         behavior: "smooth",
       });
     }
+
+    fetchFriends();
   }, [showAbout]);
 
   return (
@@ -196,7 +240,10 @@ const Album = () => {
             )}
           </div>
 
-          <div style={{ textAlign: "center", margin: "20px 0" }} className="fly-up">
+          <div
+            style={{ textAlign: "center", margin: "20px 0" }}
+            className="fly-up"
+          >
             <button
               onClick={() => handleAlbumSave(albumInfo, "LISTEN_LATER")}
               disabled={albumSaved === "LISTEN_LATER"}
@@ -221,6 +268,18 @@ const Album = () => {
               {albumSaved === "DISLIKE" ? "Disliked" : "👎 Dislike"}
             </button>
           </div>
+
+          {albumSaved !== "" && (
+            <>
+              <button
+                onClick={() => setIsRecommendClicked(!isRecommendClicked)}
+              >
+                Recommend to a friend
+              </button>
+              {isRecommendClicked &&
+                friends.map((friend, index) => <Link onClick={() => recommendAlbum(friend.username)} key={index}>{friend.username}</Link>)}
+            </>
+          )}
 
           {albumInfo.wiki && (
             <div className="fly-up">

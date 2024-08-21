@@ -358,4 +358,13 @@ tbody tr:hover {
 
 .entity-class {
   align-items: center;
+}
+
+.notification {
+  background-color: rgb(75, 68, 38);
+  box-shadow: 0 0 20px rgb(75, 68, 38);
+}
+
+.gray {
+  background-color: #2b2b2b;
 }/*# sourceMappingURL=index.css.map */

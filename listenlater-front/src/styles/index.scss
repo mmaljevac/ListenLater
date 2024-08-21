@@ -3,6 +3,8 @@ $secondary-color: #0f8b2e;
 $dark-green: #0c5c20;
 $bright-green: #04ff43;
 $background: #1d1d1d;
+$gray: #2b2b2b;
+$notification: rgb(75, 68, 38);
 
 body {
   margin: 0;
@@ -367,3 +369,13 @@ tbody tr:hover {
 .entity-class {
   align-items: center;
 }
+
+.notification {
+  background-color: $notification;
+  box-shadow: 0 0 20px $notification;
+}
+
+.gray {
+  background-color: $gray;
+}
+

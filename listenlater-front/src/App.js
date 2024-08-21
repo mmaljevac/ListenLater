@@ -10,6 +10,7 @@ import AlbumInfo from "./components/AlbumInfo";
 import Charts from "./components/Charts";
 import UserProfile from "./components/UserProfile";
 import ArtistInfo from "./components/ArtistInfo";
+import Social from "./components/Social";
 
 function App() {
   return (
@@ -30,6 +31,7 @@ function App() {
         ></Route>
         <Route path="/artist/:artist" element={<ArtistInfo />}></Route>
         <Route path="/charts" element={<Charts />}></Route>
+        <Route path="/social" element={<Social />}></Route>
         <Route
           path="/user/:userName/:actionParam"
           element={<UserProfile />}
