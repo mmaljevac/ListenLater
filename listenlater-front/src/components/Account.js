@@ -52,14 +52,12 @@ const Account = () => {
         }),
       })
         .then((response) => {
-          console.log(response);
           if (!response.ok) {
             throw new Error(`HTTP error! Status: ${response.status}`);
           }
           return response.json();
         })
         .then((data) => {
-          console.log(data);
           if (data) {
             alert("Password changed!");
           }
@@ -75,8 +73,8 @@ const Account = () => {
     }
   };
 
-  const deleteUser = async () => {
-    await fetch(`http://localhost:8080/users/updateUserRole/${curUser.id}`, {
+  const deactivateUser = async () => {
+    await fetch(`http://localhost:8080/users/updateUserStatus/DEACTIVATED/${curUser.id}`, {
       method: "PATCH",
     })
       .then((response) => {
@@ -86,7 +84,7 @@ const Account = () => {
         return response.json();
       })
       .then((data) => {
-        alert("Account deleted!");
+        alert("Account deactivated!");
         handleLogout();
       })
       .catch((error) => {
@@ -137,7 +135,7 @@ const Account = () => {
       </form>
       {message && <p style={{ color: "#1ee21e" }}>{message}</p>}
       <h2>Delete account</h2>
-      <button style={{ backgroundColor: "red" }} onClick={deleteUser}>
+      <button style={{ backgroundColor: "red" }} onClick={deactivateUser}>
         Deactivate
       </button>
     </div>

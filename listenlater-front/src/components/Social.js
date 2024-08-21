@@ -19,8 +19,6 @@ const Social = () => {
       const payload = await response.json();
       if (response.ok) {
         setInvites(payload.data);
-        console.log("invites");
-        console.log(payload);
       } else if (response.status === 404) {
         console.log(response);
       }
@@ -40,9 +38,6 @@ const Social = () => {
       const payload = await response.json();
       if (response.ok) {
         setFriends(payload.data);
-        console.log("friends");
-        console.log(curUser.username);
-        console.log(payload);
       } else if (response.status === 404) {
         console.log(response);
       }
@@ -81,9 +76,7 @@ const Social = () => {
         }
       );
       const payload = await response.json();
-      if (response.ok) {
-        console.log(payload.success);
-      } else if (response.status === 404) {
+      if (response.status === 404) {
         console.log(response);
       }
     } catch (error) {

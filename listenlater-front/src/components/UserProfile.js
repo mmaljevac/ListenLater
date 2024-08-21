@@ -43,11 +43,7 @@ const UserProfile = () => {
           }
         );
         const payload = await response.json();
-        if (response.ok) {
-          if (payload.success === true) {
-            console.log(payload.success);
-          }
-        } else if (response.status === 404) {
+        if (response.status === 404) {
           console.log(response);
         }
       } catch (error) {
@@ -62,11 +58,7 @@ const UserProfile = () => {
           }
         );
         const payload = await response.json();
-        if (response.ok) {
-          if (payload.success === true) {
-            console.log(payload.success);
-          }
-        } else if (response.status === 404) {
+        if (response.status === 404) {
           console.log(response);
         }
       } catch (error) {
@@ -113,7 +105,7 @@ const UserProfile = () => {
         fetchAlbums();
         return payload;
       } else if (response.status === 404) {
-        console.log(response.message);
+        console.log(response);
       }
     } catch (error) {
       throw new Error(`Fetch error: ${error}`);

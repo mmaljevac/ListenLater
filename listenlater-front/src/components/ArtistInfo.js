@@ -64,7 +64,6 @@ const ArtistInfo = () => {
 
       for (let i = 0; i < data.relations.length; i++) {
         if (data.relations[i].type === "image") {
-          console.log("IMAGE");
           let image_url = data.relations[i].url.resource;
           if (
             image_url.startsWith("https://commons.wikimedia.org/wiki/File:")
@@ -174,7 +173,7 @@ const ArtistInfo = () => {
           {topTracks && (
             <div>
               {topTracks?.map((track, index) => (
-                <div className="fly-up">
+                <div key={index} className="fly-up">
                   <Track
                     key={index}
                     index={index}

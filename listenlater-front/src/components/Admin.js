@@ -7,19 +7,11 @@ const Admin = () => {
 
   const [users, setUsers] = useState([]);
 
-  useEffect(() => {
-    if (!(curUser && curUser.role === "ADMIN")) {
-      return <Navigate to={{ pathname: "/" }} />;
-    }
-    fetchUsers();
-  }, [curUser]);
-
   const fetchUsers = async () => {
     await fetch(`http://localhost:8080/users`, {
       method: "GET",
     })
       .then((response) => {
-        console.log(response);
         if (!response.ok) {
           throw new Error(`HTTP error! Status: ${response.status}`);
         }
@@ -80,8 +72,11 @@ const Admin = () => {
   };
 
   useEffect(() => {
+    if (!(curUser && curUser.role === "ADMIN")) {
+      return <Navigate to={{ pathname: "/" }} />;
+    }
     fetchUsers();
-  }, []);
+  }, [curUser]);
 
   return (
     <>
@@ -93,6 +88,7 @@ const Admin = () => {
               <tr>
                 <th>ID</th>
                 <th>Username</th>
+                <th>Status</th>
                 <th>Role</th>
                 <th>Action</th>
               </tr>
@@ -102,6 +98,7 @@ const Admin = () => {
                 <tr key={user.id}>
                   <td>{user.id}</td>
                   <td>{user.username}</td>
+                  <td>{user.status}</td>
                   <td>
                     <Link onClick={() => updatePermission(user)}>
                       {user.role}

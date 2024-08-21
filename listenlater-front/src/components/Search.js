@@ -37,7 +37,6 @@ const Search = () => {
           setAlbumResults(data.results.albummatches.album);
         else if (entity === "artist")
           setArtistResults(data.results.artistmatches.artist);
-        console.log(data)
       } catch (error) {
         console.error("Error fetching data:", error);
       }

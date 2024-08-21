@@ -95,8 +95,6 @@ const Album = () => {
       const payload = await response.json();
       if (response.ok) {
         setFriends(payload.data);
-        console.log("friends");
-        console.log(payload);
       } else if (response.status === 404) {
         console.log(response);
       }

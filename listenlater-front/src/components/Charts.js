@@ -13,7 +13,6 @@ const Charts = () => {
       );
       const data = await response.json();
       setTracks(data.tracks.track);
-      console.log(data.tracks.track);
     } catch (error) {
       console.error("Error fetching data:", error);
     }
@@ -24,7 +23,6 @@ const Charts = () => {
       );
       const data = await response.json();
       setArtists(data.artists.artist);
-      console.log(data.artists.artist);
     } catch (error) {
       console.error("Error fetching data:", error);
     }
@@ -42,6 +40,7 @@ const Charts = () => {
         {tracks &&
           tracks.map((track, index) => (
             <div
+              key={index}
               className="fly-up"
               style={{
                 display: "flex",
@@ -74,7 +73,7 @@ const Charts = () => {
           ))}
       </div>
 
-      <h2 style={{ margin: '30px 0' }}>🎤 Artists</h2>
+      <h2 style={{ margin: "30px 0" }}>🎤 Artists</h2>
       {artists && (
         <div
           style={{
@@ -111,7 +110,6 @@ const Charts = () => {
           ))}
         </div>
       )}
-
     </div>
   );
 };

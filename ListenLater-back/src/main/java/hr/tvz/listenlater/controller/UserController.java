@@ -29,9 +29,9 @@ public class UserController {
         return userService.updateUserRole(id, Role.fromValue(stringDTO.getString()));
     }
 
-    @PatchMapping("/updateUserStatus/{id}")
-    public ResponseEntity<CustomResponse<Object>> updateUserStatus(@PathVariable Long id, @RequestBody StringDTO newStatusString) {
-        return userService.updateUserStatus(id, Status.fromValue(newStatusString.getString()));
+    @PatchMapping("/updateUserStatus/{newStatusString}/{userId}")
+    public ResponseEntity<CustomResponse<Object>> updateUserStatus(@PathVariable String newStatusString, @PathVariable Long userId) {
+        return userService.updateUserStatus(userId, Status.fromValue(newStatusString));
     }
 
     @GetMapping
