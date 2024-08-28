@@ -52,7 +52,7 @@ public class SavedAlbumService {
         } else {
             try {
                 Action action = Action.fromValue(actionString);
-                savedAlbumsByUser = savedAlbumRepository.getSavedAlbumsByUserIdAndAction(userId, action.getValue());
+                savedAlbumsByUser = savedAlbumRepository.getSavedAlbumsByUserId(userId, action.getValue());
             } catch (IllegalArgumentException e) {
                 response = CustomResponse.builder().success(false).message("Unknown action.").build();
                 return ResponseEntity.status(HttpStatus.NOT_FOUND).body(response);
@@ -84,7 +84,7 @@ public class SavedAlbumService {
         } else {
             try {
                 Action action = Action.fromValue(actionString);
-                savedAlbumsByUser = savedAlbumRepository.getSavedAlbumsByUserIdAndAction(user.getId(), action.getValue());
+                savedAlbumsByUser = savedAlbumRepository.getSavedAlbumsByUserId(user.getId(), action.getValue());
             } catch (IllegalArgumentException e) {
                 response = CustomResponse.builder().success(false).message("Unknown action.").build();
                 return ResponseEntity.status(HttpStatus.NOT_FOUND).body(response);

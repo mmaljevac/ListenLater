@@ -1,6 +1,7 @@
 import { useEffect, useRef, useState } from "react";
 import { Link, Navigate, useNavigate, useParams } from "react-router-dom";
 import { useSelector } from "react-redux";
+import { API_KEY, LASTFM_API_URL, LOCALHOST_URL } from "../constants";
 
 const Search = () => {
   const curUser = useSelector((state) => state.curUser);
@@ -28,8 +29,7 @@ const Search = () => {
     if (searchParam && searchParam.length !== 0) {
       try {
         const response = await fetch(
-          // TODO url constants
-          `https://ws.audioscrobbler.com/2.0/?method=${entity}.search&${entity}=${searchParam}&limit=30&api_key=6114c4f9da678af26ac5a4afc15d9c4f&format=json`
+          `${LASTFM_API_URL}/2.0/?method=${entity}.search&${entity}=${searchParam}&limit=30&api_key=${API_KEY}&format=json`
         );
         const data = await response.json();
 
@@ -47,7 +47,7 @@ const Search = () => {
     if (searchParam && searchParam.length !== 0) {
       try {
         const response = await fetch(
-          `http://localhost:8080/users?username=${searchParam}`,
+          `${LOCALHOST_URL}/users?username=${searchParam}`,
           {
             method: "GET",
             headers: {

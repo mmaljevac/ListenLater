@@ -2,6 +2,7 @@ import { useState } from "react";
 import { useNavigate } from "react-router-dom";
 import { useDispatch, useSelector } from "react-redux";
 import { logout } from "../actions";
+import { LOCALHOST_URL } from "../constants";
 
 const Account = () => {
   const curUser = useSelector((state) => state.curUser);
@@ -41,12 +42,12 @@ const Account = () => {
     e.preventDefault();
 
     if (newPassword === confirmPassword) {
-      await fetch(`http://localhost:8080/users/changePassword/${curUser.id}`, {
+      await fetch(`${LOCALHOST_URL}/users/changePassword/${curUser.id}`, {
         method: "PATCH",
         headers: {
           "Content-Type": "application/x-www-form-urlencoded",
         },
-        body: new URLSearchParams({ // TODO
+        body: new URLSearchParams({
           currentPassword: currentPassword,
           newPassword: newPassword,
         }),
@@ -74,7 +75,7 @@ const Account = () => {
   };
 
   const deactivateUser = async () => {
-    await fetch(`http://localhost:8080/users/updateUserStatus/DEACTIVATED/${curUser.id}`, {
+    await fetch(`${LOCALHOST_URL}/users/updateUserStatus/DEACTIVATED/${curUser.id}`, {
       method: "PATCH",
     })
       .then((response) => {

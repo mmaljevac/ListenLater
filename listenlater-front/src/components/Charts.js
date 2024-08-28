@@ -1,6 +1,7 @@
 import { useEffect, useState } from "react";
 import Track from "./Track";
 import { Link } from "react-router-dom";
+import { API_KEY, LASTFM_API_URL } from "../constants";
 
 const Charts = () => {
   const [tracks, setTracks] = useState([]);
@@ -9,7 +10,7 @@ const Charts = () => {
   const fetchCharts = async () => {
     try {
       const response = await fetch(
-        `https://ws.audioscrobbler.com/2.0/?method=chart.gettoptracks&format=json&limit=10&api_key=6114c4f9da678af26ac5a4afc15d9c4f&format=json`
+        `${LASTFM_API_URL}/2.0/?method=chart.gettoptracks&format=json&limit=10&api_key=${API_KEY}&format=json`
       );
       const data = await response.json();
       setTracks(data.tracks.track);
@@ -19,7 +20,7 @@ const Charts = () => {
 
     try {
       const response = await fetch(
-        `https://ws.audioscrobbler.com/2.0/?method=chart.gettopartists&format=json&limit=9&api_key=6114c4f9da678af26ac5a4afc15d9c4f&format=json`
+        `${LASTFM_API_URL}/2.0/?method=chart.gettopartists&format=json&limit=9&api_key=${API_KEY}&format=json`
       );
       const data = await response.json();
       setArtists(data.artists.artist);

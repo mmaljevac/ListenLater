@@ -45,20 +45,20 @@ public class SavedAlbumRepository {
                 " JOIN SAVED_ALBUMS sa ON a.ID = sa.ALBUM_ID " +
                 " JOIN USERS u ON sa.USER_ID = u.ID " +
                 " WHERE u.ID = :userId " +
-                " ORDER BY a.ARTIST ASC, a.NAME ASC ";
+                " ORDER BY a.ARTIST, a.NAME";
         MapSqlParameterSource parameters = new MapSqlParameterSource();
         parameters.addValue("userId", userId);
 
         return jdbcParams.query(sql, parameters, this::mapRowToSavedAlbum);
     }
 
-    public List<SavedAlbum> getSavedAlbumsByUserIdAndAction(Long userId, String action) {
+    public List<SavedAlbum> getSavedAlbumsByUserId(Long userId, String action) {
         String sql = " SELECT * FROM ALBUMS a " +
                 " JOIN SAVED_ALBUMS sa ON a.ID = sa.ALBUM_ID " +
                 " JOIN USERS u ON sa.USER_ID = u.ID " +
                 " WHERE u.ID = :userId " +
                 " AND sa.ACTION = :action " +
-                " ORDER BY a.ARTIST ASC, a.NAME ASC ";
+                " ORDER BY a.ARTIST, a.NAME ";
         MapSqlParameterSource parameters = new MapSqlParameterSource();
         parameters.addValue("userId", userId);
         parameters.addValue("action", action);

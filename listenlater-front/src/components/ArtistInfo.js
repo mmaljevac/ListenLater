@@ -2,6 +2,7 @@ import { useEffect, useState } from "react";
 import { useSelector } from "react-redux";
 import { Link, useParams } from "react-router-dom";
 import Track from "./Track";
+import { API_KEY, LASTFM_API_URL } from "../constants";
 
 const ArtistInfo = () => {
   const curUser = useSelector((state) => state.curUser);
@@ -21,7 +22,7 @@ const ArtistInfo = () => {
     // artist info
     try {
       const response = await fetch(
-        `https://ws.audioscrobbler.com/2.0/?method=artist.getinfo&artist=${artistName}&api_key=6114c4f9da678af26ac5a4afc15d9c4f&format=json`
+        `${LASTFM_API_URL}/2.0/?method=artist.getinfo&artist=${artistName}&api_key=${API_KEY}&format=json`
       );
       const data = await response.json();
       setArtistInfo(data.artist);
@@ -33,7 +34,7 @@ const ArtistInfo = () => {
     // top tracks
     try {
       const response = await fetch(
-        `https://ws.audioscrobbler.com/2.0/?method=artist.gettoptracks&artist=${artistName}&api_key=6114c4f9da678af26ac5a4afc15d9c4f&format=json&limit=10`
+        `${LASTFM_API_URL}/2.0/?method=artist.gettoptracks&artist=${artistName}&api_key=${API_KEY}&format=json&limit=10`
       );
       const data = await response.json();
       setTopTracks(data.toptracks.track);
@@ -44,7 +45,7 @@ const ArtistInfo = () => {
     // top albums
     try {
       const response = await fetch(
-        `https://ws.audioscrobbler.com/2.0/?method=artist.gettopalbums&artist=${artistName}&api_key=6114c4f9da678af26ac5a4afc15d9c4f&format=json&limit=5`
+        `${LASTFM_API_URL}/2.0/?method=artist.gettopalbums&artist=${artistName}&api_key=${API_KEY}&format=json&limit=5`
       );
       const data = await response.json();
       setTopAlbums(data.topalbums.album);

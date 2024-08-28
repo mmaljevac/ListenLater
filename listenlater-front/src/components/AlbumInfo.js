@@ -2,6 +2,7 @@ import { useEffect, useState } from "react";
 import { useSelector } from "react-redux";
 import { Link, useParams } from "react-router-dom";
 import Track from "./Track";
+import { API_KEY, LASTFM_API_URL, LOCALHOST_URL } from "../constants";
 
 const Album = () => {
   const curUser = useSelector((state) => state.curUser);
@@ -18,7 +19,7 @@ const Album = () => {
   const fetchAlbumInfo = async () => {
     try {
       const response = await fetch(
-        `https://ws.audioscrobbler.com/2.0/?method=album.getinfo&artist=${artist}&album=${albumName}&api_key=6114c4f9da678af26ac5a4afc15d9c4f&format=json`
+        `${LASTFM_API_URL}/2.0/?method=album.getinfo&artist=${artist}&album=${albumName}&api_key=${API_KEY}&format=json`
       );
       const data = await response.json();
       setAlbumInfo(data.album);
@@ -30,7 +31,7 @@ const Album = () => {
   const isAlbumSaved = async () => {
     try {
       const response = await fetch(
-        `http://localhost:8080/saved-albums/album/user/${curUser.id}?fullName=${
+        `${LOCALHOST_URL}/saved-albums/album/user/${curUser.id}?fullName=${
           artist + "/" + albumName
         }`,
         {
@@ -59,7 +60,7 @@ const Album = () => {
 
     try {
       const response = await fetch(
-        `http://localhost:8080/saved-albums/save/user/${curUser.id}?action=${action}`,
+        `${LOCALHOST_URL}/saved-albums/save/user/${curUser.id}?action=${action}`,
         {
           method: "POST",
           headers: {
@@ -87,7 +88,7 @@ const Album = () => {
   const fetchFriends = async () => {
     try {
       const response = await fetch(
-        `http://localhost:8080/friends/${curUser.username}`,
+        `${LOCALHOST_URL}/friends/${curUser.username}`,
         {
           method: "GET",
         }
@@ -106,7 +107,7 @@ const Album = () => {
   const recommendAlbum = async (friendUserName) => {
     try {
       const response = await fetch(
-        `http://localhost:8080/invites/recommend-album?curUserName=${curUser.username}&friendUserName=${friendUserName}&albumFullName=${artist}/${albumName}&message=Check this album out!`,
+        `${LOCALHOST_URL}/invites/recommend-album?curUserName=${curUser.username}&friendUserName=${friendUserName}&albumFullName=${artist}/${albumName}&message=Check this album out!`,
         {
           method: "POST",
         }

@@ -1,6 +1,7 @@
 import { useEffect, useState } from "react";
 import { Link, Navigate } from "react-router-dom";
 import { useSelector } from "react-redux";
+import { LOCALHOST_URL } from "../constants";
 
 const Admin = () => {
   const curUser = useSelector((state) => state.curUser);
@@ -8,7 +9,7 @@ const Admin = () => {
   const [users, setUsers] = useState([]);
 
   const fetchUsers = async () => {
-    await fetch(`http://localhost:8080/users`, {
+    await fetch(`${LOCALHOST_URL}/users`, {
       method: "GET",
     })
       .then((response) => {
@@ -28,7 +29,7 @@ const Admin = () => {
   };
 
   const handleDeleteUser = async (id) => {
-    await fetch(`http://localhost:8080/users/${id}`, {
+    await fetch(`${LOCALHOST_URL}/users/${id}`, {
       method: "DELETE",
     })
       .then((response) => {
@@ -50,7 +51,7 @@ const Admin = () => {
   const updatePermission = async (user) => {
     let newRole = "USER";
     if (user.role === "USER") newRole = "ADMIN";
-    await fetch(`http://localhost:8080/users/updateUserRole/${user.id}`, {
+    await fetch(`${LOCALHOST_URL}/users/updateUserRole/${user.id}`, {
       method: "PATCH",
       headers: {
         "Content-Type": "application/json",

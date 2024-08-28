@@ -1,6 +1,7 @@
 import { useEffect, useState } from "react";
 import { useSelector } from "react-redux";
 import { Link, Navigate } from "react-router-dom";
+import { LOCALHOST_URL } from "../constants";
 
 const Social = () => {
   const curUser = useSelector((state) => state.curUser);
@@ -11,7 +12,7 @@ const Social = () => {
   const fetchInvites = async () => {
     try {
       const response = await fetch(
-        `http://localhost:8080/invites/${curUser.username}`,
+        `${LOCALHOST_URL}/invites/${curUser.username}`,
         {
           method: "GET",
         }
@@ -30,7 +31,7 @@ const Social = () => {
   const fetchFriends = async () => {
     try {
       const response = await fetch(
-        `http://localhost:8080/friends/${curUser.username}`,
+        `${LOCALHOST_URL}/friends/${curUser.username}`,
         {
           method: "GET",
         }
@@ -49,7 +50,7 @@ const Social = () => {
   const handleAddFriend = async (invite) => {
     try {
       const response = await fetch(
-        `http://localhost:8080/friends/add?curUserName=${invite.sender.username}&friendUserName=${invite.receiver.username}`,
+        `${LOCALHOST_URL}/friends/add?curUserName=${invite.sender.username}&friendUserName=${invite.receiver.username}`,
         {
           method: "POST",
         }
@@ -70,7 +71,7 @@ const Social = () => {
   const deleteInvite = async (inviteId) => {
     try {
       const response = await fetch(
-        `http://localhost:8080/invites/remove/${inviteId}`,
+        `${LOCALHOST_URL}/invites/remove/${inviteId}`,
         {
           method: "DELETE",
         }
