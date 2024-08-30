@@ -1,6 +1,6 @@
 import React, { useState } from "react";
 import { useNavigate } from "react-router-dom";
-import { LOCALHOST_URL } from "../constants";
+import { BACKEND_URL } from "../constants";
 
 const Register = () => {
   const [error, setError] = useState("");
@@ -39,7 +39,7 @@ const Register = () => {
     }
 
     try {
-      const response = await fetch(`${LOCALHOST_URL}/auth/register`, {
+      const response = await fetch(`${BACKEND_URL}/auth/register`, {
         method: "POST",
         headers: {
           "Content-Type": "application/json",

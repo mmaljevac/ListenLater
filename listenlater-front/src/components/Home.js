@@ -1,7 +1,7 @@
 import { Link, Navigate } from "react-router-dom";
 import { useSelector } from "react-redux";
 import { useEffect, useState } from "react";
-import { LOCALHOST_URL } from "../constants";
+import { BACKEND_URL } from "../constants";
 
 const Home = () => {
   const curUser = useSelector((state) => state.curUser);
@@ -11,7 +11,7 @@ const Home = () => {
   const fetchInvites = async () => {
     try {
       const response = await fetch(
-        `${LOCALHOST_URL}/invites/count/${curUser.username}`,
+        `${BACKEND_URL}/invites/count/${curUser.username}`,
         {
           method: "GET",
         }

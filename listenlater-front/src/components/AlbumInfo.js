@@ -2,7 +2,7 @@ import { useEffect, useState } from "react";
 import { useSelector } from "react-redux";
 import { Link, useParams } from "react-router-dom";
 import Track from "./Track";
-import { API_KEY, LASTFM_API_URL, LOCALHOST_URL } from "../constants";
+import { API_KEY, LASTFM_API_URL, BACKEND_URL } from "../constants";
 
 const Album = () => {
   const curUser = useSelector((state) => state.curUser);
@@ -31,7 +31,7 @@ const Album = () => {
   const isAlbumSaved = async () => {
     try {
       const response = await fetch(
-        `${LOCALHOST_URL}/saved-albums/album/user/${curUser.id}?fullName=${
+        `${BACKEND_URL}/saved-albums/album/user/${curUser.id}?fullName=${
           artist + "/" + albumName
         }`,
         {
@@ -60,7 +60,7 @@ const Album = () => {
 
     try {
       const response = await fetch(
-        `${LOCALHOST_URL}/saved-albums/save/user/${curUser.id}?action=${action}`,
+        `${BACKEND_URL}/saved-albums/save/user/${curUser.id}?action=${action}`,
         {
           method: "POST",
           headers: {
@@ -88,7 +88,7 @@ const Album = () => {
   const fetchFriends = async () => {
     try {
       const response = await fetch(
-        `${LOCALHOST_URL}/friends/${curUser.username}`,
+        `${BACKEND_URL}/friends/${curUser.username}`,
         {
           method: "GET",
         }
@@ -107,7 +107,7 @@ const Album = () => {
   const recommendAlbum = async (friendUserName) => {
     try {
       const response = await fetch(
-        `${LOCALHOST_URL}/invites/recommend-album?curUserName=${curUser.username}&friendUserName=${friendUserName}&albumFullName=${artist}/${albumName}&message=Check this album out!`,
+        `${BACKEND_URL}/invites/recommend-album?curUserName=${curUser.username}&friendUserName=${friendUserName}&albumFullName=${artist}/${albumName}&message=Check this album out!`,
         {
           method: "POST",
         }
@@ -284,7 +284,14 @@ const Album = () => {
                       key={index}
                       className="friend-item fly-up"
                     >
-                      <div className="user-bubble" style={{ width: '80px', height: '80px', fontSize: '40px' }}>
+                      <div
+                        className="user-bubble"
+                        style={{
+                          width: "80px",
+                          height: "80px",
+                          fontSize: "40px",
+                        }}
+                      >
                         {friend.username.charAt(0)}
                       </div>
                       <div style={{ margin: "10px 0", fontWeight: "bold" }}>

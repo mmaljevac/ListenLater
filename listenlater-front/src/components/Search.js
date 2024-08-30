@@ -1,7 +1,7 @@
 import { useEffect, useRef, useState } from "react";
 import { Link, Navigate, useNavigate, useParams } from "react-router-dom";
 import { useSelector } from "react-redux";
-import { API_KEY, LASTFM_API_URL, LOCALHOST_URL } from "../constants";
+import { API_KEY, LASTFM_API_URL, BACKEND_URL } from "../constants";
 
 const Search = () => {
   const curUser = useSelector((state) => state.curUser);
@@ -47,7 +47,7 @@ const Search = () => {
     if (searchParam && searchParam.length !== 0) {
       try {
         const response = await fetch(
-          `${LOCALHOST_URL}/users?username=${searchParam}`,
+          `${BACKEND_URL}/users?username=${searchParam}`,
           {
             method: "GET",
             headers: {

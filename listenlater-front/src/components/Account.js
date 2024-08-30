@@ -2,7 +2,7 @@ import { useState } from "react";
 import { useNavigate } from "react-router-dom";
 import { useDispatch, useSelector } from "react-redux";
 import { logout } from "../actions";
-import { LOCALHOST_URL } from "../constants";
+import { BACKEND_URL } from "../constants";
 
 const Account = () => {
   const curUser = useSelector((state) => state.curUser);
@@ -42,42 +42,41 @@ const Account = () => {
     e.preventDefault();
 
     if (newPassword === confirmPassword) {
-      await fetch(`${LOCALHOST_URL}/users/changePassword/${curUser.id}`, {
-        method: "PATCH",
-        headers: {
-          "Content-Type": "application/x-www-form-urlencoded",
-        },
-        body: new URLSearchParams({
-          currentPassword: currentPassword,
-          newPassword: newPassword,
-        }),
-      })
-        .then((response) => {
-          if (!response.ok) {
-            throw new Error(`HTTP error! Status: ${response.status}`);
-          }
-          return response.json();
-        })
-        .then((data) => {
-          if (data) {
-            alert("Password changed!");
-          }
-        })
-        .catch((error) => {
-          console.error("Fetch error:", error);
-          alert("Wrong current password entered!");
+      try {
+        const response = await fetch(`${BACKEND_URL}/users/changePassword`, {
+          method: "PATCH",
+          headers: {
+            "Content-Type": "application/json",
+          },
+          body: JSON.stringify({
+            username: curUser.username,
+            currentPassword: currentPassword,
+            newPassword: newPassword,
+          }),
         });
-
-      setMessage("");
+        const payload = await response.json();
+        if (response.ok) {
+          alert(payload.message);
+          dispatch(logout());
+          navigate("/login");
+        } else if (response.status === 404) {
+          setMessage(payload.message);
+        }
+      } catch (error) {
+        throw new Error(`Fetch error: ${error}`);
+      }
     } else {
       setMessage("New password and confirm password do not match.");
     }
   };
 
   const deactivateUser = async () => {
-    await fetch(`${LOCALHOST_URL}/users/updateUserStatus/DEACTIVATED/${curUser.id}`, {
-      method: "PATCH",
-    })
+    await fetch(
+      `${BACKEND_URL}/users/updateUserStatus/DEACTIVATED/${curUser.id}`,
+      {
+        method: "PATCH",
+      }
+    )
       .then((response) => {
         if (!response.ok) {
           throw new Error(`HTTP error! Status: ${response.status}`);

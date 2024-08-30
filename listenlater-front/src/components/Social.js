@@ -1,7 +1,7 @@
 import { useEffect, useState } from "react";
 import { useSelector } from "react-redux";
 import { Link, Navigate } from "react-router-dom";
-import { LOCALHOST_URL } from "../constants";
+import { BACKEND_URL } from "../constants";
 
 const Social = () => {
   const curUser = useSelector((state) => state.curUser);
@@ -12,7 +12,7 @@ const Social = () => {
   const fetchInvites = async () => {
     try {
       const response = await fetch(
-        `${LOCALHOST_URL}/invites/${curUser.username}`,
+        `${BACKEND_URL}/invites/${curUser.username}`,
         {
           method: "GET",
         }
@@ -31,7 +31,7 @@ const Social = () => {
   const fetchFriends = async () => {
     try {
       const response = await fetch(
-        `${LOCALHOST_URL}/friends/${curUser.username}`,
+        `${BACKEND_URL}/friends/${curUser.username}`,
         {
           method: "GET",
         }
@@ -50,7 +50,7 @@ const Social = () => {
   const handleAddFriend = async (invite) => {
     try {
       const response = await fetch(
-        `${LOCALHOST_URL}/friends/add?curUserName=${invite.sender.username}&friendUserName=${invite.receiver.username}`,
+        `${BACKEND_URL}/friends/add?curUserName=${invite.sender.username}&friendUserName=${invite.receiver.username}`,
         {
           method: "POST",
         }
@@ -71,7 +71,7 @@ const Social = () => {
   const deleteInvite = async (inviteId) => {
     try {
       const response = await fetch(
-        `${LOCALHOST_URL}/invites/remove/${inviteId}`,
+        `${BACKEND_URL}/invites/remove/${inviteId}`,
         {
           method: "DELETE",
         }
@@ -131,7 +131,7 @@ const Social = () => {
                 key={index}
                 style={{
                   textAlign: "center",
-                  flex: "1"
+                  flex: "1",
                 }}
               >
                 <img

@@ -39,7 +39,7 @@ public class UserService {
                     .success(false)
                     .message("Current password is incorrect.")
                     .build();
-            return ResponseEntity.status(HttpStatus.OK).body(response);
+            return ResponseEntity.status(HttpStatus.NOT_FOUND).body(response);
         }
 
         boolean isChangedPassword = userRepository.changePassword(user.getId(), newPassword);
@@ -48,12 +48,12 @@ public class UserService {
                     .success(false)
                     .message("Error changing password.")
                     .build();
-            return ResponseEntity.status(HttpStatus.OK).body(response);
+            return ResponseEntity.status(HttpStatus.NOT_FOUND).body(response);
         }
 
         response = CustomResponse.builder()
                 .success(true)
-                .message("Password changed successfully.")
+                .message("Password changed successfully. Please log in with new password.")
                 .build();
         return ResponseEntity.status(HttpStatus.OK).body(response);
     }

@@ -1,7 +1,7 @@
 import { useEffect, useState } from "react";
 import { useSelector } from "react-redux";
 import { Link, Navigate, useNavigate, useParams } from "react-router-dom";
-import { LOCALHOST_URL } from "../constants";
+import { BACKEND_URL } from "../constants";
 
 const UserProfile = () => {
   const curUser = useSelector((state) => state.curUser);
@@ -15,7 +15,7 @@ const UserProfile = () => {
   const fetchFriendStatus = async () => {
     try {
       const response = await fetch(
-        `${LOCALHOST_URL}/friends/friend-status?curUserName=${curUser.username}&friendUserName=${userName}`,
+        `${BACKEND_URL}/friends/friend-status?curUserName=${curUser.username}&friendUserName=${userName}`,
         {
           method: "GET",
         }
@@ -38,7 +38,7 @@ const UserProfile = () => {
     if (friendStatus === "") {
       try {
         const response = await fetch(
-          `${LOCALHOST_URL}/invites/friend-request?curUserName=${curUser.username}&friendUserName=${userName}`,
+          `${BACKEND_URL}/invites/friend-request?curUserName=${curUser.username}&friendUserName=${userName}`,
           {
             method: "POST",
           }
@@ -53,7 +53,7 @@ const UserProfile = () => {
     } else if (friendStatus === "friend") {
       try {
         const response = await fetch(
-          `${LOCALHOST_URL}/friends/remove?curUserName=${curUser.username}&friendUserName=${userName}`,
+          `${BACKEND_URL}/friends/remove?curUserName=${curUser.username}&friendUserName=${userName}`,
           {
             method: "DELETE",
           }
@@ -73,7 +73,7 @@ const UserProfile = () => {
   const fetchAlbums = async () => {
     try {
       const response = await fetch(
-        `${LOCALHOST_URL}/saved-albums/username/${userName}`,
+        `${BACKEND_URL}/saved-albums/username/${userName}`,
         {
           method: "GET",
         }
@@ -82,6 +82,7 @@ const UserProfile = () => {
       if (response.ok) {
         setSavedAlbums(payload.data);
       } else if (response.status === 404) {
+        alert(`Success: ${response.success}, ${response.message}`);
       }
     } catch (error) {
       throw new Error(`Fetch error: ${error}`);
@@ -96,7 +97,7 @@ const UserProfile = () => {
   const handleDelete = async (id) => {
     try {
       const response = await fetch(
-        `${LOCALHOST_URL}/saved-albums/user/${curUser.id}/album/${id}`,
+        `${BACKEND_URL}/saved-albums/user/${curUser.id}/album/${id}`,
         {
           method: "DELETE",
         }
